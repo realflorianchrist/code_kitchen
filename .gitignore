@@ -39,6 +39,7 @@
 # Logs and databases #
 ######################
 /log/
+/database/
 *.log
 *.sql
 *.sqlite
