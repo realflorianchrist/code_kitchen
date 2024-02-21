@@ -31,7 +31,7 @@ public class CreateSQLData {
 
     public static void main(String[] args) {
 //        connectToSQLServer();
-//        PROJECT_NUMBERS.clear();
+        PROJECT_NUMBERS.clear();
         readCADProjectsFromU();
         System.out.println(PROJECT_NUMBERS);
         System.out.println(PROJECT_NUMBERS.size());
