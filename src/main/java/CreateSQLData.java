@@ -38,10 +38,10 @@ public class CreateSQLData {
     private static final HashMap<String, String> PLAN_NUMBER_TO_PLOTFILE_PATH = new HashMap<>();
 
     public static void main(String[] args) {
-//        connectToSQLServer();
+        connectToSQLServer();
         readCADProjectsFromU();
         readPlotfilePathsFromU();
-        printFoundPlotfiles();
+//        printFoundPlotfiles();
     }
 
     public static void connectToSQLServer() {
@@ -81,7 +81,6 @@ public class CreateSQLData {
         }
     }
 
-
     public static void readPlotfilePathsFromU() {
         try {
             // Alle PDF-Dateien im Verzeichnis und seinen Unterordnern durchsuchen
@@ -91,10 +90,11 @@ public class CreateSQLData {
                     .forEach(pdfFile -> {
                         // Prüfen, ob der Ordner "frei" im Pfad enthalten ist
                         if (pdfFile.getParent().endsWith("frei")) {
-                            // Pfad und Plan-Nummer in die Map einfügen
-                            String planNumber = extractPlanNumberFromFileName(pdfFile.getFileName().toString());
-                            if (planNumber != null) {
-                                PLAN_NUMBER_TO_PLOTFILE_PATH.put(planNumber, pdfFile.toString());
+                            String planNr = extractPlanNumberFromFileName(pdfFile.getFileName().toString());
+                            if (planNr != null && !PLAN_NUMBER_TO_PLOTFILE_PATH.containsKey(planNr)) {
+                                PLAN_NUMBER_TO_PLOTFILE_PATH.put(planNr, pdfFile.toString());
+                                writePlanNrIntoPlansTable(planNr);
+                                writePlotfileTable(planNr, pdfFile.toString());
                             }
                         }
                     });
@@ -106,17 +106,55 @@ public class CreateSQLData {
     }
 
     private static String extractPlanNumberFromFileName(String fileName) {
-        // Annahme: Dateiname hat das Format "f_<ProjektNr>_<PlanNr>_ bzw. -<weitere Informationen>.pdf"
+        // Annahme: Dateiname hat das Format "f_<ProjektNr>_<PlanNr>_<weitere Informationen>.pdf"
         String[] parts = fileName.split("_");
         if (parts.length >= 3) {
             String projectAndPlan = parts[2];
 
+            String projectNr = parts[1];
+            String planNr = parts[2];
+            String index = parts[3];
+
             String[] projectAndPlanParts = projectAndPlan.split("-");
             if (projectAndPlanParts.length >= 2) {
-                return parts[1] + "/" + projectAndPlanParts[0];
+                planNr = projectAndPlanParts[0];
+                index = projectAndPlanParts[1];
             }
+
+            return projectNr + "/" + planNr + "-" + index;
         }
         return null;
+    }
+
+    private static void writePlotfileTable(String planNr, String path) {
+        try (Connection connection = DATA_SOURCE.getConnection()) {
+            // SQL-Anweisung zum Einfügen in die Tabelle plotfiles
+            String sql = "INSERT INTO plotfiles (plan_path, plan_nr) VALUES (?, ?)";
+
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.setString(1, path);
+                preparedStatement.setString(2, planNr);
+
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void writePlanNrIntoPlansTable(String planNr) {
+        try (Connection connection = DATA_SOURCE.getConnection()) {
+            // SQL-Anweisung zum Einfügen der Plannummern in die Tabelle plans
+            String sql = "INSERT INTO plans (plan_nr) VALUES (?)";
+
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.setString(1, planNr);
+
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void printFoundPlotfiles() {
