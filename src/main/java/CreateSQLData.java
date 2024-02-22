@@ -3,6 +3,7 @@ package src.main.java;
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 import com.microsoft.sqlserver.jdbc.SQLServerException;
 
+import java.io.File;
 import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -23,6 +24,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class CreateSQLData {
 
@@ -36,7 +38,8 @@ public class CreateSQLData {
         PROJECT_NUMBERS.clear();
         readCADProjectsFromU();
         System.out.println(PROJECT_NUMBERS);
-        System.out.println(PROJECT_NUMBERS.size());
+        readPlotfilePathsFromU();
+        System.out.println(PROJECT_NUMBER_TO_PLOTFILE_PATHS);
 
 //        try (Connection con = DATA_SOURCE.getConnection();
 //             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM projects");
@@ -98,6 +101,29 @@ public class CreateSQLData {
     }
 
     public static void readPlotfilePathsFromU() {
+        try {
+            // Für jede Projektnummer den Unterordner "frei" durchsuchen
+            for (String projectNumber : PROJECT_NUMBERS) {
+                Path basePath = Paths.get(PLOTFILES_DIRECTORY);
+                Path projectPath = basePath.resolve(projectNumber).resolve("frei");
 
+                // PDF-Dateien im Unterordner "frei" durchsuchen
+                try (Stream<Path> pdfFiles = Files.walk(projectPath)) {
+                    pdfFiles.filter(Files::isRegularFile)
+                        .filter(path -> path.toString().toLowerCase().endsWith(".pdf"))
+                        .forEach(pdfFile -> {
+                            // Pfad und Projektnummer in die Tabelle einfügen
+                            if (!PROJECT_NUMBER_TO_PLOTFILE_PATHS.containsKey(projectNumber)) {
+                                PROJECT_NUMBER_TO_PLOTFILE_PATHS.put(projectNumber, new HashSet<>());
+                            }
+                            PROJECT_NUMBER_TO_PLOTFILE_PATHS.get(projectNumber).add(pdfFile.toString());
+                            // insertDataIntoTable(connection, projectNumber, pdfFile.toString());
+                        });
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
