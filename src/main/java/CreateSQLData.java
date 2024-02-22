@@ -4,6 +4,7 @@ import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 import com.microsoft.sqlserver.jdbc.SQLServerException;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -21,6 +22,8 @@ import java.sql.Statement;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,7 +42,7 @@ public class CreateSQLData {
         readCADProjectsFromU();
         System.out.println(PROJECT_NUMBERS);
         readPlotfilePathsFromU();
-        System.out.println(PROJECT_NUMBER_TO_PLOTFILE_PATHS);
+//        System.out.println(PROJECT_NUMBER_TO_PLOTFILE_PATHS);
 
 //        try (Connection con = DATA_SOURCE.getConnection();
 //             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM projects");
@@ -102,28 +105,60 @@ public class CreateSQLData {
 
     public static void readPlotfilePathsFromU() {
         try {
-            // Für jede Projektnummer den Unterordner "frei" durchsuchen
-            for (String projectNumber : PROJECT_NUMBERS) {
-                Path basePath = Paths.get(PLOTFILES_DIRECTORY);
-                Path projectPath = basePath.resolve(projectNumber).resolve("frei");
+            // Für jede Projektnummer den Unterordner "frei" suchen
+            Map<String, Path> freiFolderPaths = findFreiFolderPaths();
+
+            for (Map.Entry<String, Path> entry : freiFolderPaths.entrySet()) {
+                String projectNumber = entry.getKey();
+                Path freiFolderPath = entry.getValue();
 
                 // PDF-Dateien im Unterordner "frei" durchsuchen
-                try (Stream<Path> pdfFiles = Files.walk(projectPath)) {
+                try (Stream<Path> pdfFiles = Files.walk(freiFolderPath)) {
                     pdfFiles.filter(Files::isRegularFile)
                         .filter(path -> path.toString().toLowerCase().endsWith(".pdf"))
                         .forEach(pdfFile -> {
                             // Pfad und Projektnummer in die Tabelle einfügen
-                            if (!PROJECT_NUMBER_TO_PLOTFILE_PATHS.containsKey(projectNumber)) {
-                                PROJECT_NUMBER_TO_PLOTFILE_PATHS.put(projectNumber, new HashSet<>());
-                            }
-                            PROJECT_NUMBER_TO_PLOTFILE_PATHS.get(projectNumber).add(pdfFile.toString());
+                            PROJECT_NUMBER_TO_PLOTFILE_PATHS
+                                .computeIfAbsent(projectNumber, k -> new HashSet<>())
+                                .add(pdfFile.toString());
                             // insertDataIntoTable(connection, projectNumber, pdfFile.toString());
                         });
                 }
             }
 
+            for (Map.Entry<String, Set<String>> entry : PROJECT_NUMBER_TO_PLOTFILE_PATHS.entrySet()) {
+                String projectNumber = entry.getKey();
+                Set<String> plotFilePaths = entry.getValue();
+                System.out.println("Projektnummer: " + projectNumber);
+                System.out.println("Gefundene PDF-Dateien:");
+                for (String plotFilePath : plotFilePaths) {
+                    System.out.println(plotFilePath);
+                }
+                System.out.println();
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static Map<String, Path> findFreiFolderPaths() throws IOException {
+        Map<String, Path> freiFolderPaths = new HashMap<>();
+
+        for (String targetProjectNumber : PROJECT_NUMBERS) {
+            List<Path> matchingDirectories = findMatchingDirectories(targetProjectNumber);
+            if (!matchingDirectories.isEmpty()) {
+                Path freiFolderPath = matchingDirectories.get(0).resolve("frei");
+                freiFolderPaths.put(targetProjectNumber, freiFolderPath);
+            }
+        }
+
+        return freiFolderPaths;
+    }
+
+    private static List<Path> findMatchingDirectories(String targetProjectNumber) throws IOException {
+        return Files.walk(Paths.get(PLOTFILES_DIRECTORY))
+            .filter(path -> path.toFile().isDirectory() && path.getFileName().toString().equals(targetProjectNumber))
+            .toList();
     }
 }
