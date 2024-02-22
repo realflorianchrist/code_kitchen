@@ -39,8 +39,9 @@ public class CreateSQLData {
 
     public static void main(String[] args) {
         connectToSQLServer();
-        readCADProjectsFromU();
-        readPlotfilePathsFromU();
+        clearTables();
+//        readCADProjectsFromU();
+//        readPlotfilePathsFromU();
 //        printFoundPlotfiles();
     }
 
@@ -52,6 +53,27 @@ public class CreateSQLData {
         DATA_SOURCE.setPortNumber(Integer.parseInt("1433"));
         DATA_SOURCE.setDatabaseName("plan_directory");
         DATA_SOURCE.setTrustServerCertificate(true);
+    }
+
+    public static void clearTables() {
+        try (Connection connection = DATA_SOURCE.getConnection()) {
+            clearTable(connection, "plotfiles");
+            clearTable(connection, "plans");
+            clearTable(connection, "projects");
+
+            System.out.println("Tabellen erfolgreich geleert.");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void clearTable(Connection connection, String tableName) throws SQLException {
+        String sql = "DELETE FROM " + tableName;
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.executeUpdate();
+        }
     }
 
     public static void readCADProjectsFromU() {
