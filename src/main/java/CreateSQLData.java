@@ -35,35 +35,13 @@ public class CreateSQLData {
     public static final String PLOTFILES_DIRECTORY = "src/main/resources/testdata/U";
     private static final Set<String> PROJECT_NUMBERS = new HashSet<>();
     private static final HashMap<String, Set<String>> PROJECT_NUMBER_TO_PLOTFILE_PATHS = new HashMap<>();
+    private static final HashMap<String, String> PLAN_NUMBER_TO_PLOTFILE_PATH = new HashMap<>();
 
     public static void main(String[] args) {
 //        connectToSQLServer();
-        PROJECT_NUMBERS.clear();
         readCADProjectsFromU();
-        System.out.println(PROJECT_NUMBERS);
         readPlotfilePathsFromU();
-//        System.out.println(PROJECT_NUMBER_TO_PLOTFILE_PATHS);
-
-//        try (Connection con = DATA_SOURCE.getConnection();
-//             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM projects");
-//             ResultSet rs = pstmt.executeQuery()) {
-//
-//            while (rs.next()) {
-//                String projectNr = rs.getString("project_nr");
-//                String contractor = rs.getString("contractor");
-//                String projectManager = rs.getString("project_manager");
-//                String cadProjectSupervisor = rs.getString("cad_project_supervisor");
-//
-//                System.out.println("Project Nr: " + projectNr);
-//                System.out.println("Contractor: " + contractor);
-//                System.out.println("Project Manager: " + projectManager);
-//                System.out.println("CAD Project Supervisor: " + cadProjectSupervisor);
-//                System.out.println("------------------------------");
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-
+        printFoundPlotfiles();
     }
 
     public static void connectToSQLServer() {
@@ -103,6 +81,55 @@ public class CreateSQLData {
         }
     }
 
+
+    public static void readPlotfilePathsFromU() {
+        try {
+            // Alle PDF-Dateien im Verzeichnis und seinen Unterordnern durchsuchen
+            try (Stream<Path> pdfFiles = Files.walk(Paths.get(PLOTFILES_DIRECTORY))) {
+                pdfFiles.filter(Files::isRegularFile)
+                    .filter(path -> path.toString().toLowerCase().endsWith(".pdf"))
+                    .forEach(pdfFile -> {
+                        // Prüfen, ob der Ordner "frei" im Pfad enthalten ist
+                        if (pdfFile.getParent().endsWith("frei")) {
+                            // Pfad und Plan-Nummer in die Map einfügen
+                            String planNumber = extractPlanNumberFromFileName(pdfFile.getFileName().toString());
+                            if (planNumber != null) {
+                                PLAN_NUMBER_TO_PLOTFILE_PATH.put(planNumber, pdfFile.toString());
+                            }
+                        }
+                    });
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static String extractPlanNumberFromFileName(String fileName) {
+        // Annahme: Dateiname hat das Format "f_<ProjektNr>_<PlanNr>_ bzw. -<weitere Informationen>.pdf"
+        String[] parts = fileName.split("_");
+        if (parts.length >= 3) {
+            String projectAndPlan = parts[2];
+
+            String[] projectAndPlanParts = projectAndPlan.split("-");
+            if (projectAndPlanParts.length >= 2) {
+                return parts[1] + "/" + projectAndPlanParts[0];
+            }
+        }
+        return null;
+    }
+
+    private static void printFoundPlotfiles() {
+        for (Map.Entry<String, String> entry : PLAN_NUMBER_TO_PLOTFILE_PATH.entrySet()) {
+            String planNumber = entry.getKey();
+            String plotFilePath = entry.getValue();
+            System.out.println("Plan-Nummer: " + planNumber);
+            System.out.println("Gefundene PDF-Datei: " + plotFilePath);
+            System.out.println();
+        }
+    }
+
+    /*
     public static void readPlotfilePathsFromU() {
         try {
             // Für jede Projektnummer den Unterordner "frei" suchen
@@ -124,17 +151,6 @@ public class CreateSQLData {
                             // insertDataIntoTable(connection, projectNumber, pdfFile.toString());
                         });
                 }
-            }
-
-            for (Map.Entry<String, Set<String>> entry : PROJECT_NUMBER_TO_PLOTFILE_PATHS.entrySet()) {
-                String projectNumber = entry.getKey();
-                Set<String> plotFilePaths = entry.getValue();
-                System.out.println("Projektnummer: " + projectNumber);
-                System.out.println("Gefundene PDF-Dateien:");
-                for (String plotFilePath : plotFilePaths) {
-                    System.out.println(plotFilePath);
-                }
-                System.out.println();
             }
 
         } catch (Exception e) {
@@ -161,4 +177,18 @@ public class CreateSQLData {
             .filter(path -> path.toFile().isDirectory() && path.getFileName().toString().equals(targetProjectNumber))
             .toList();
     }
+
+    private static void printFoundPlotfiles() {
+        for (Map.Entry<String, Set<String>> entry : PROJECT_NUMBER_TO_PLOTFILE_PATHS.entrySet()) {
+            String projectNumber = entry.getKey();
+            Set<String> plotFilePaths = entry.getValue();
+            System.out.println("Projektnummer: " + projectNumber);
+            System.out.println("Gefundene PDF-Dateien:");
+            for (String plotFilePath : plotFilePaths) {
+                System.out.println(plotFilePath);
+            }
+            System.out.println();
+        }
+    } */
+
 }
