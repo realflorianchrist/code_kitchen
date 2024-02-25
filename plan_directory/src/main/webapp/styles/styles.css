@@ -7,9 +7,10 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Helvetica, Arial, sans-serif;
+    font-family: "Frutiger LT W02_47 Light Cond", "Arial Narrow", Arial, serif;
     font-size: 16px;
     color: white;
+    letter-spacing: 0.01em;
 }
 
 .text-left  {
@@ -18,6 +19,23 @@
 
 .text-right  {
     text-align: right;
+}
+
+h1 {
+    font-size: 3em;
+}
+
+h2 {
+    font-size: 2.5em;
+}
+
+h3 {
+    font-size: 1.5em;
+}
+
+h4 {
+    font-size: 1.1em;
+    text-transform: uppercase;
 }
 
 body {
@@ -36,16 +54,35 @@ body {
 header {
     align-items: center;
     background-color: black;
-    display: inline-flex;
+    display: flex;
     height: 50px;
     padding: 10px;
     width: 100vw;
 }
 
+header .filter-button {
+    margin-left: auto;
+    height: 100%;
+    width: 50px;
+}
+
+header .filter-button:hover, header .search-bar:hover {
+    background-color: rgba(189, 187, 187, 0.3);
+}
+
+header .search-bar {
+    margin-left: 10px;
+}
+
 header .search-bar input {
-    background-color: transparent;
-    border-color: white;
-    border-radius: 5px;
+    padding: 5px;
     height: 100%;
     width: 200px;
 }
+
+header .search-bar input, header .filter-button {
+    background-color: transparent;
+    border: 1px solid white;
+    border-radius: 5px;
+}
+
