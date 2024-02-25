@@ -12,6 +12,23 @@
     color: white;
 }
 
+h1 {
+    font-size: 3em;
+}
+
+h2 {
+    font-size: 2.5em;
+}
+
+h3 {
+    font-size: 1.5em;
+}
+
+h4 {
+    font-size: 1.1em;
+    text-transform: uppercase;
+}
+
 .text-left  {
     text-align: left;
 }
@@ -42,6 +59,7 @@ section {
     justify-content: center;
     position: relative;
 }
+
 
 /* Main-Page*/
 
@@ -141,19 +159,20 @@ ul.timeline li article {
     width: 47%;
 }
 
-h1 {
-    font-size: 3em;
+/* works */
+
+.works {
+    background-color: red;
+    align-items: center;
+    flex-direction: row;
 }
 
-h2 {
-    font-size: 2.5em;
+.works h3, .works p {
+    margin-bottom: 30px;
+    text-align: center;
 }
 
-h3 {
-    font-size: 1.5em;
-}
-
-h4 {
-    font-size: 1.1em;
-    text-transform: uppercase;
+.works .title {
+    position: absolute;
+    top: 30px;
 }
