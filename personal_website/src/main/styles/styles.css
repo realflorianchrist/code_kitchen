@@ -162,7 +162,6 @@ ul.timeline li article {
 /* works */
 
 .works {
-    background-color: red;
     align-items: center;
     flex-direction: row;
 }
@@ -175,4 +174,23 @@ ul.timeline li article {
 .works .title {
     position: absolute;
     top: 30px;
+}
+
+.projects {
+    align-self: flex-end;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 80vh;
+}
+
+.projects li {
+    border: 2px solid white;
+    border-radius: 5px;
+    padding: 20px;
+    text-align: center;
 }
