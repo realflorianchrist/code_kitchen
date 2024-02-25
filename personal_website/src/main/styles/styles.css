@@ -190,7 +190,6 @@ ul.timeline li article {
 
 .projects li {
     border: 2px solid white;
-    border-radius: 5px;
-    padding: 20px;
+    border-radius: 10px;
     text-align: center;
 }
