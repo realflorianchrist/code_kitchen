@@ -1,0 +1,159 @@
+:root {
+    --background-color: #06001d;
+    --brighter-background-color: #1e243c;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    color: white;
+}
+
+.text-left  {
+    text-align: left;
+}
+
+.text-right  {
+    text-align: right;
+}
+
+body {
+    background: var(--background-color);
+    /*
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.1) 2px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.1) 2px, transparent 1px);
+    background-size: 50px 50px;
+    background-color: #a1a1a1;
+    background-position: center;
+    margin: 0;
+    padding: 0;
+    */
+}
+
+section {
+    padding: 20px;
+    display: flex;
+    height: 100vh;
+    align-items: flex-end;
+    justify-content: center;
+    position: relative;
+}
+
+/* Main-Page*/
+
+.main-page {
+    background: linear-gradient(180deg, #1e243c, #0a0a32, #06001d);
+}
+
+.main-page ul {
+    list-style-type: none;
+    line-height: 1;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    align-self: center;
+    width: 500px;
+}
+
+.picture img {
+    position: absolute;
+    bottom: 10%;
+    left: 5%;
+    height: 250px;
+    width: 200px;
+}
+
+.media-icons {
+    align-items: center;
+    position: absolute;
+    bottom: 5%;
+}
+
+.media-icons .icon {
+    margin: 10px;
+}
+
+/*.main-page ul, .main-page img, .icon {
+    filter: drop-shadow(10px 5px 10px var(--brighter-background-color));
+    text-shadow: 10px 5px 10px var(--brighter-background-color);
+}*/
+
+
+/* Time-Line */
+
+.cv {
+    align-items: center;
+    flex-direction: column;
+}
+
+.cv h3, .cv p {
+    margin-bottom: 30px;
+}
+
+ul.timeline {
+    display: block;
+    width: 100%;
+    padding: 25px 0 15px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+ul.timeline:before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 5px;
+    height: 100%;
+    border-radius: 2px;
+    background: #cccccc;
+    transform: translateX(-50%);
+}
+
+ul.timeline li {
+    display: block;
+    position: relative;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+ul.timeline li:before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    background: #cccccc;
+    transform: translate(-50%);
+}
+
+ul.timeline li article {
+    display: inline-block;
+    position: relative;
+    width: 47%;
+}
+
+h1 {
+    font-size: 3em;
+}
+
+h2 {
+    font-size: 2.5em;
+}
+
+h3 {
+    font-size: 1.5em;
+}
+
+h4 {
+    font-size: 1.1em;
+    text-transform: uppercase;
+}
