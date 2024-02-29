@@ -52,6 +52,8 @@ body {
     padding: 0;
 }
 
+/* Header */
+
 header {
     align-items: center;
     background-color: black;
@@ -68,9 +70,9 @@ header .filter-button {
     width: 50px;
 }
 
-header .filter-button:hover, header .search-bar:hover {
-    background-color: rgba(189, 187, 187, 0.3);
-}
+/*header .filter-button:hover, header .search-bar:hover {*/
+/*    background-color: rgba(189, 187, 187, 0.3);*/
+/*}*/
 
 header .search-bar {
     margin-left: 10px;
@@ -88,12 +90,40 @@ header .search-bar input, header .filter-button {
     border-radius: 5px;
 }
 
+/* Filter Bar */
+
 .filter-bar {
     display: none;
-    background-color: lightgray;
+    background-color: black;
     padding: 10px;
     position: fixed;
     height: 200px;
     top: 50px;
     width: 100%;
+}
+
+.filters li {
+    list-style: none;
+    padding: 5px;
+}
+
+.filters input {
+    background-color: transparent;
+    border: 1px transparent solid;
+    border-bottom-color: white;
+}
+
+.filter-bar button {
+    background-color: transparent;
+    border: 1px white solid;
+    border-radius: 5px;
+    padding: 3px;
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+}
+
+
+button:hover, label:hover, input:hover {
+    background-color: rgba(189, 187, 187, 0.3);
 }
