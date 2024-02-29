@@ -6,6 +6,14 @@ function toggleFilterBar() {
 let filterButton = document.querySelector(".filter-button");
 filterButton.addEventListener("click", toggleFilterBar);
 
+function saveButtonPressed() {
+    toggleFilterBar();
+}
+
+let saveButton = document.getElementById("save-button");
+saveButton.addEventListener("click", saveButtonPressed);
+
+
 // document.addEventListener("click", function(event) {
 //     let filterBar = document.getElementById("filterBar");
 //     let filterButton = document.querySelector(".filter-button");

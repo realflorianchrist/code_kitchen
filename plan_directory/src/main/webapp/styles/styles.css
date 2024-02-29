@@ -70,10 +70,6 @@ header .filter-button {
     width: 50px;
 }
 
-/*header .filter-button:hover, header .search-bar:hover {*/
-/*    background-color: rgba(189, 187, 187, 0.3);*/
-/*}*/
-
 header .search-bar {
     margin-left: 10px;
 }
@@ -99,7 +95,8 @@ header .search-bar input, header .filter-button {
     position: fixed;
     height: 200px;
     top: 50px;
-    width: 100%;
+    right: 0;
+    width: 50%;
 }
 
 .filters li {
@@ -111,6 +108,8 @@ header .search-bar input, header .filter-button {
     background-color: transparent;
     border: 1px transparent solid;
     border-bottom-color: white;
+    position: absolute;
+    left: 160px;
 }
 
 .filter-bar button {
@@ -126,4 +125,8 @@ header .search-bar input, header .filter-button {
 
 button:hover, label:hover, input:hover {
     background-color: rgba(189, 187, 187, 0.3);
+}
+
+input:focus {
+    outline: none;
 }
