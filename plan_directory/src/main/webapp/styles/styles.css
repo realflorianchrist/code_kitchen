@@ -107,11 +107,18 @@ header .search-bar input, header .filter-button {
     list-style: none;
     padding: 0;
     margin: 0;
-    flex-direction: column;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .filters li {
-    padding: 5px;
+    flex-direction: column;
+    width: 50%;
+    padding: 10px;
+}
+
+.filters div {
+    width: 170px;
 }
 
 .filters input {
@@ -119,6 +126,32 @@ header .search-bar input, header .filter-button {
     border: 1px transparent solid;
     border-bottom-color: white;
 }
+
+
+
+/*.filters {*/
+/*    display: flex;*/
+/*    list-style: none;*/
+/*    padding: 0;*/
+/*}*/
+
+/*.filters .column {*/
+/*    flex: 1;*/
+/*}*/
+
+/*.filters li {*/
+/*    padding: 5px;*/
+/*    justify-content: space-between;*/
+/*    width: 50%;*/
+/*    background-color: red;*/
+/*}*/
+
+/*.filters input {*/
+/*    background-color: transparent;*/
+/*    border: 1px transparent solid;*/
+/*    border-bottom-color: white;*/
+/*    width: 100%;*/
+/*}*/
 
 .filter-bar button {
     background-color: transparent;
