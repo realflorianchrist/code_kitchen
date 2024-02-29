@@ -1,13 +1,14 @@
 :root {
     --background-color: #06001d;
     --brighter-background-color: #1e243c;
+    --header-height: 50px;
 }
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: "Frutiger LT W02_47 Light Cond", "Arial Narrow", Arial, serif;
+    font-family: Arial, serif;
     font-size: 16px;
     color: white;
     letter-spacing: 0.01em;
@@ -48,8 +49,11 @@ body {
     background-size: 50px 50px;
     background-color: #a1a1a1;
     background-position: center;
-    margin: 0;
-    padding: 0;
+    padding-top: var(--header-height);
+}
+
+button {
+    cursor: pointer;
 }
 
 /* Header */
@@ -58,10 +62,11 @@ header {
     align-items: center;
     background-color: black;
     display: flex;
-    height: 50px;
+    height: var(--header-height);
     padding: 10px;
     position: fixed;
     width: 100vw;
+    top: 0;
 }
 
 header .filter-button {
@@ -94,13 +99,18 @@ header .search-bar input, header .filter-button {
     padding: 10px;
     position: fixed;
     height: 200px;
-    top: 50px;
     right: 0;
-    width: 50%;
+    width: 700px;
+}
+
+.filters {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-direction: column;
 }
 
 .filters li {
-    list-style: none;
     padding: 5px;
 }
 
@@ -108,8 +118,6 @@ header .search-bar input, header .filter-button {
     background-color: transparent;
     border: 1px transparent solid;
     border-bottom-color: white;
-    position: absolute;
-    left: 160px;
 }
 
 .filter-bar button {
@@ -121,6 +129,7 @@ header .search-bar input, header .filter-button {
     bottom: 20px;
     right: 20px;
 }
+
 
 
 button:hover, label:hover, input:hover {
