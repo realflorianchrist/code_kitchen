@@ -98,7 +98,7 @@ header .search-bar input, header .filter-button {
     background-color: black;
     padding: 10px;
     position: fixed;
-    height: 200px;
+    height: fit-content;
     right: 0;
     width: 700px;
 }
