@@ -127,32 +127,6 @@ header .search-bar input, header .filter-button {
     border-bottom-color: white;
 }
 
-
-
-/*.filters {*/
-/*    display: flex;*/
-/*    list-style: none;*/
-/*    padding: 0;*/
-/*}*/
-
-/*.filters .column {*/
-/*    flex: 1;*/
-/*}*/
-
-/*.filters li {*/
-/*    padding: 5px;*/
-/*    justify-content: space-between;*/
-/*    width: 50%;*/
-/*    background-color: red;*/
-/*}*/
-
-/*.filters input {*/
-/*    background-color: transparent;*/
-/*    border: 1px transparent solid;*/
-/*    border-bottom-color: white;*/
-/*    width: 100%;*/
-/*}*/
-
 .filter-bar button {
     background-color: transparent;
     border: 1px white solid;
@@ -163,6 +137,16 @@ header .search-bar input, header .filter-button {
     right: 20px;
 }
 
+/* Table */
+
+#table {
+    width: 100%;
+}
+
+#table thead {
+    background-color: red;
+    height: 30px;
+}
 
 
 button:hover, label:hover, input:hover {
