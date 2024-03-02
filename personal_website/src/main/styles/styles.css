@@ -167,7 +167,6 @@ ul.timeline li article {
 
 .works {
     align-items: center;
-    flex-direction: row;
 }
 
 .works h3, .works p {
@@ -182,8 +181,8 @@ ul.timeline li article {
 
 .projects {
     align-self: flex-end;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
+    flex-wrap: wrap;
     gap: 10px;
     list-style: none;
     padding: 0;
@@ -192,8 +191,17 @@ ul.timeline li article {
     height: 80vh;
 }
 
-.projects li {
-    border: 2px solid white;
-    border-radius: 10px;
-    text-align: center;
+#javafx {
+    align-items: center;
+    align-self: flex-end;
+    display: flex;
+}
+
+#javafx p {
+    text-align: left;
+}
+
+#javafx a {
+    display: block;
+    margin-top: 15px;
 }
