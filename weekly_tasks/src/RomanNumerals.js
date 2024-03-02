@@ -12,10 +12,17 @@ function convertRomanNumeralsToNumber(numeral) {
     let split_numeral = [...numeral];
     let value = 0;
 
-    split_numeral.forEach(s => {
+    for (let i = 0; i < split_numeral.length; i++) {
+        let currentNumeral = ROMAN_NUMERALS[split_numeral[i]];
+        let nextNumeral = ROMAN_NUMERALS[split_numeral[i + 1]];
 
-    });
-
+        if (nextNumeral > currentNumeral) {
+            value += nextNumeral - currentNumeral;
+            i++;
+        } else {
+            value += currentNumeral;
+        }
+    }
 
     return value;
 }
