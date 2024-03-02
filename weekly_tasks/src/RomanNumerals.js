@@ -28,3 +28,24 @@ function convertRomanNumeralsToNumber(numeral) {
 }
 
 console.log(convertRomanNumeralsToNumber("IV"));
+
+const convertRomanNumeralsToNumberLambda = numeral => {
+    let split_numeral = [...numeral];
+    let value = 0;
+
+    for (let i = 0; i < split_numeral.length; i++) {
+        let currentNumeral = ROMAN_NUMERALS[split_numeral[i]];
+        let nextNumeral = ROMAN_NUMERALS[split_numeral[i + 1]];
+
+        if (nextNumeral > currentNumeral) {
+            value += nextNumeral - currentNumeral;
+            i++;
+        } else {
+            value += currentNumeral;
+        }
+    }
+
+    return value;
+}
+
+console.log(convertRomanNumeralsToNumberLambda("IV"));
