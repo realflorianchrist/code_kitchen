@@ -1,6 +1,9 @@
 :root {
-    --background-color: #06001d;
-    --brighter-background-color: #1e243c;
+    /*--background-color: #06001d;*/
+    /*--brighter-background-color: #1e243c;*/
+
+    --background-color: #141414;
+    --brighter-background-color: #3f3f3f;
 }
 
 * {
@@ -64,7 +67,8 @@ section {
 /* Main-Page*/
 
 .main-page {
-    background: linear-gradient(180deg, #1e243c, #0a0a32, #06001d);
+    /*background: linear-gradient(180deg, #1e243c, #0a0a32, #06001d);*/
+    background-image: linear-gradient(to top, #141414 30%, #1e1e1e, #292929, #343434, #3f3f3f);
 }
 
 .main-page ul {
