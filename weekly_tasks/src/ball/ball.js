@@ -1,30 +1,46 @@
 
 const radius = 10;
-const ball = {x:20, y:0, dx: 5, dy: 1};
+const ball = {x:20, y:0, dx: 5, dy: 1, mass: 5};
 let   old  = {x: ball.x, y: ball.y};
 
 function start() {
     const canvas  = document.getElementById("canvas");
+    canvas.style.backgroundColor = "yellow";
     const context = canvas.getContext("2d");
     context.fillStyle = "black";
 
     setInterval(() => {
-        nextBoard();
+        nextBoard(canvas);
         display(context);
     }, 1000 / 20);
 }
 
-function nextBoard() {
+function nextBoard(canvas) {
     // keep old ball values for the sake of efficient clearing of the old display
+    old = {x: ball.x, y: ball.y};
 
     // handle ball is hitting the bounds
     //   reverse direction
     //   lose some energy relative to the current inertia (only velocity varies)
+    let bounciness = 0.95;
+
+    if (ball.y + radius >= canvas.height) {
+        ball.y = canvas.height - radius;
+        ball.dy = -ball.dy * bounciness;
+    }
+
+    if (ball.x + radius >= canvas.width || ball.x - radius <= 0) {
+        if (ball.x - radius <= 0) ball.x = radius;
+        if (ball.x + radius >= canvas.width) ball.x = canvas.width - radius;
+        ball.dx = -ball.dx * bounciness;
+    }
 
     // calculate new position
     // calculate any changes in velocity due to gravitational pull or medium resistance
-
-
+    ball.dy += 0.2;
+    ball.y += ball.dy;
+    ball.dx += Math.random() * 0.05;
+    ball.x += ball.dx;
 }
 
 function display(context) {
