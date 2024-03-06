@@ -1,10 +1,10 @@
 
 const radius = 10;
-const ball = {x:20, y:0, dx: 5, dy: 1, mass: 5};
+const ball = {x:20, y:0, dx: 5, dy: 1};
 let   old  = {x: ball.x, y: ball.y};
 
 function start() {
-    const canvas  = document.getElementById("canvas");
+    const canvas= document.getElementById("canvas");
     canvas.style.backgroundColor = "yellow";
     const context = canvas.getContext("2d");
     context.fillStyle = "black";
@@ -22,24 +22,30 @@ function nextBoard(canvas) {
     // handle ball is hitting the bounds
     //   reverse direction
     //   lose some energy relative to the current inertia (only velocity varies)
-    let bounciness = 0.95;
+    function bounceOf(velocity) {
+        const bounciness = 0.95;
+        return -velocity * bounciness;
+    }
 
     if (ball.y + radius >= canvas.height) {
         ball.y = canvas.height - radius;
-        ball.dy = -ball.dy * bounciness;
+        ball.dy = bounceOf(ball.dy);
     }
 
-    if (ball.x + radius >= canvas.width || ball.x - radius <= 0) {
-        if (ball.x - radius <= 0) ball.x = radius;
-        if (ball.x + radius >= canvas.width) ball.x = canvas.width - radius;
-        ball.dx = -ball.dx * bounciness;
+    if (ball.x - radius <= 0) {
+        ball.x = radius;
+        ball.dx = bounceOf(ball.dx);
+    }
+
+    if (ball.x + radius >= canvas.width) {
+        ball.x = canvas.width - radius;
+        ball.dx = bounceOf(ball.dx);
     }
 
     // calculate new position
     // calculate any changes in velocity due to gravitational pull or medium resistance
     ball.dy += 0.2;
     ball.y += ball.dy;
-    ball.dx += Math.random() * 0.05;
     ball.x += ball.dx;
 }
 
