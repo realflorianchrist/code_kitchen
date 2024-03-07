@@ -1,5 +1,8 @@
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.ss.usermodel.*;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
@@ -35,11 +38,12 @@ public class CreateSQLData {
     public static void main(String[] args) {
 //        connectToSQLServer();
 //        clearTables();
-        readCADProjectsFromU();
+//        readCADProjectsFromU();
 //        readPlotfilePathsFromU();
 //        printFoundPlotfiles();
-        readProjectInfoFromK();
-        System.out.println(PROJECT_NUMBER_TO_PROJECT_INFO);
+//        readProjectInfoFromK();
+//        System.out.println(PROJECT_NUMBER_TO_PROJECT_INFO);
+        readExcelFile();
     }
 
     public static void connectToSQLServer() {
@@ -202,6 +206,38 @@ public class CreateSQLData {
                 });
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void readExcelFile() {
+        try (FileInputStream fileInputStream = new FileInputStream("plan_directory/src/main/resources"
+            + "/testdata/K/9000/9925/P100_Projektschluessel/324135F-Projekteroeffnung.xlsm")) {
+            // Öffnen Sie das Arbeitsbuch (Workbook)
+            Workbook workbook = WorkbookFactory.create(fileInputStream);
+
+            // Wählen Sie das Blatt (Sheet) aus
+            Sheet sheet = workbook.getSheetAt(0);
+
+            // Geben Sie die Zellenkoordinaten an, z.B. A1, B2, etc.
+            int rowNumber = 45;
+            int cellNumber = 6;
+
+            // Holen Sie sich die Zeile
+            Row row = sheet.getRow(rowNumber);
+
+            // Holen Sie sich die Zelle
+            Cell cell = row.getCell(cellNumber);
+
+            // Lesen Sie den Zellenwert
+            String cellValue = cell.getStringCellValue();
+
+            // Zeigen Sie den gelesenen Wert an
+            System.out.println("Wert in Zelle F45: " + cellValue);
+
+            // Schließen Sie das Arbeitsbuch, um Ressourcen freizugeben
+            workbook.close();
+        } catch (IOException | EncryptedDocumentException ex) {
+            ex.printStackTrace();
         }
     }
 
