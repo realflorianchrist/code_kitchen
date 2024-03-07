@@ -1,5 +1,3 @@
-package plan_directory.src.main.java;
-
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 
 import java.io.IOException;
@@ -25,17 +23,23 @@ import java.util.stream.Stream;
 public class CreateSQLData {
 
     private static final SQLServerDataSource DATA_SOURCE = new SQLServerDataSource();
-    public static final String PLOTFILES_DIRECTORY = "src/main/resources/testdata/U";
+    public static final String PLOTFILES_DIRECTORY = "plan_directory/src/main/resources/testdata/U";
+    private static final String PROJECT_DIRECTORY = "plan_directory/src/main/resources/testdata/K";
     private static final Set<String> PROJECT_NUMBERS = new HashSet<>();
+    // Muster für die Projektnummern (xxxx oder xxxxx)
+    private static final Pattern PROJECT_NUMBER_PATTERN = Pattern.compile("\\d{4,5}");
     private static final HashMap<String, Set<String>> PROJECT_NUMBER_TO_PLOTFILE_PATHS = new HashMap<>();
     private static final HashMap<String, String> PLAN_NUMBER_TO_PLOTFILE_PATH = new HashMap<>();
+    private static final HashMap<String, String> PROJECT_NUMBER_TO_PROJECT_INFO = new HashMap<>();
 
     public static void main(String[] args) {
-        connectToSQLServer();
-        clearTables();
-//        readCADProjectsFromU();
+//        connectToSQLServer();
+//        clearTables();
+        readCADProjectsFromU();
 //        readPlotfilePathsFromU();
 //        printFoundPlotfiles();
+        readProjectInfoFromK();
+        System.out.println(PROJECT_NUMBER_TO_PROJECT_INFO);
     }
 
     public static void connectToSQLServer() {
@@ -70,9 +74,6 @@ public class CreateSQLData {
     }
 
     public static void readCADProjectsFromU() {
-        // Muster für die Projektnummern (xxxx oder xxxxx)
-        Pattern pattern = Pattern.compile("\\d{4,5}");
-
         try {
             Files.walkFileTree(Paths.get(PLOTFILES_DIRECTORY), EnumSet.noneOf(FileVisitOption.class), Integer.MAX_VALUE,
                 new SimpleFileVisitor<>() {
@@ -81,7 +82,7 @@ public class CreateSQLData {
                         String dirName = dir.getFileName().toString();
 
                         // Projektnummer aus dem Verzeichnisnamen extrahieren
-                        Matcher matcher = pattern.matcher(dirName);
+                        Matcher matcher = PROJECT_NUMBER_PATTERN.matcher(dirName);
                         if (matcher.find()) {
                             String projectNumber = matcher.group();
                             if (!projectNumber.matches("[1-9]000") && !projectNumber.matches("[1-9][0-9]000")) {
@@ -121,7 +122,7 @@ public class CreateSQLData {
     }
 
     private static String extractPlanNumberFromFileName(String fileName) {
-        // Annahme: Dateiname hat das Format "f_<ProjektNr>_<PlanNr>_<weitere Informationen>.pdf"
+        // Annahme: Dateiname hat das Format "f_<ProjektNr>_<PlanNr>(_,-)<Index>_<weitere Informationen>.pdf"
         String[] parts = fileName.split("_");
         if (parts.length >= 3) {
             String projectAndPlan = parts[2];
@@ -143,7 +144,6 @@ public class CreateSQLData {
 
     private static void writePlotfileTable(String planNr, String path) {
         try (Connection connection = DATA_SOURCE.getConnection()) {
-            // SQL-Anweisung zum Einfügen in die Tabelle plotfiles
             String sql = "INSERT INTO plotfiles (plan_path, plan_nr) VALUES (?, ?)";
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -159,7 +159,6 @@ public class CreateSQLData {
 
     private static void writePlanNrIntoPlansTable(String planNr) {
         try (Connection connection = DATA_SOURCE.getConnection()) {
-            // SQL-Anweisung zum Einfügen der Plannummern in die Tabelle plans
             String sql = "INSERT INTO plans (plan_nr) VALUES (?)";
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -179,6 +178,30 @@ public class CreateSQLData {
             System.out.println("Plan-Nummer: " + planNumber);
             System.out.println("Gefundene PDF-Datei: " + plotFilePath);
             System.out.println();
+        }
+    }
+
+    public static void readProjectInfoFromK() {
+        try {
+            Files.walkFileTree(Paths.get(PROJECT_DIRECTORY), EnumSet.noneOf(FileVisitOption.class), Integer.MAX_VALUE,
+                new SimpleFileVisitor<>() {
+                    @Override
+                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+                        String dirName = dir.getFileName().toString();
+
+                        // Projektnummer aus dem Verzeichnisnamen extrahieren
+                        Matcher matcher = PROJECT_NUMBER_PATTERN.matcher(dirName);
+                        if (matcher.find()) {
+                            String projectNumber = matcher.group();
+                            if (PROJECT_NUMBERS.contains(projectNumber)) {
+                                PROJECT_NUMBER_TO_PROJECT_INFO.computeIfAbsent(projectNumber, k -> "Test");
+                            }
+                        }
+                        return FileVisitResult.CONTINUE;
+                    }
+                });
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
