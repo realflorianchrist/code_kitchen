@@ -1,6 +1,7 @@
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -214,13 +215,14 @@ public class CreateSQLData {
         try (FileInputStream fileInputStream = new FileInputStream("plan_directory/src/main/resources"
             + "/testdata/K/9000/9925/P100_Projektschluessel/324135F-Projekteroeffnung.xlsm")) {
             // Öffnen Sie das Arbeitsbuch (Workbook)
-            Workbook workbook = WorkbookFactory.create(fileInputStream);
+//            Workbook workbook = WorkbookFactory.create(fileInputStream);
+            Workbook workbook = new XSSFWorkbook(fileInputStream);
 
             Sheet targetSheet = null;
             for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
                 Sheet sheet = workbook.getSheetAt(i);
                 String sheetName = sheet.getSheetName();
-                if (sheetName.startsWith(".Index")) {
+                if (sheetName.toLowerCase().startsWith(".index")) {
                     targetSheet = sheet;
                     break;
                 }
@@ -228,40 +230,47 @@ public class CreateSQLData {
             System.out.println(targetSheet.getSheetName());
 
 // Geben Sie die Zellenkoordinaten des Textfelds an
-            int rowNumber = 45;
-            int cellNumber = 6; // Dies ist die Spaltennummer für das Textfeld
+            int rowNumber = 44;
+            int cellNumber = 5;
 
-            Row row = targetSheet.getRow(rowNumber);
 
-// Überprüfen Sie, ob die Zeile existiert und nicht null ist
-            if (row != null) {
-                // Holen Sie sich die Zelle
-                Cell cell = row.getCell(cellNumber);
-
-                // Überprüfen Sie, ob die Zelle existiert und nicht null ist
-                if (cell != null) {
-                    // Lesen Sie den Zellenwert
-                    String cellValue = "";
-
-                    System.out.println(cell.getCellType());
-                    // Überprüfen Sie den Zelltyp, bevor Sie auf den Zellenwert zugreifen
-                    if (cell.getCellType() == CellType.STRING) {
-                        cellValue = cell.getStringCellValue();
-                    } else if (cell.getCellType() == CellType.NUMERIC) {
-                        // Wenn die Zelle eine numerische Zelle ist, können Sie sie entsprechend abrufen
-                        cellValue = String.valueOf(cell.getNumericCellValue());
-                    } else if (cell.getCellType() == CellType.FORMULA) {
-                        // Wenn die Zelle eine Formel enthält, können Sie sie entsprechend abrufen
-                        cellValue = cell.getCellFormula();
+            if (targetSheet != null) {
+                Row row = targetSheet.getRow(rowNumber);
+                if (row != null) {
+                    Cell cell = row.getCell(cellNumber);
+                    if (cell != null) {
+                        // Überprüfen Sie den Zelltyp
+                        switch (cell.getCellType()) {
+                        case STRING:
+                            String cellValue = cell.getStringCellValue();
+                            System.out.println("Wert in der Zelle: " + cellValue);
+                            break;
+                        case NUMERIC:
+                            double numericCellValue = cell.getNumericCellValue();
+                            System.out.println("Wert in der Zelle: " + numericCellValue);
+                            break;
+                        case BOOLEAN:
+                            boolean booleanCellValue = cell.getBooleanCellValue();
+                            System.out.println("Wert in der Zelle: " + booleanCellValue);
+                            break;
+                        case FORMULA:
+                            String formulaCellValue = cell.getCellFormula();
+                            System.out.println("Wert in der Zelle: " + formulaCellValue);
+                            break;
+                        case BLANK:
+                            System.out.println("Die Zelle ist leer.");
+                            break;
+                        default:
+                            System.out.println("Der Zelltyp wird nicht unterstützt.");
+                        }
+                    } else {
+                        System.out.println("Die Zelle ist null.");
                     }
-
-                    // Zeigen Sie den gelesenen Wert an
-                    System.out.println("Wert ist: " + cellValue);
                 } else {
-                    System.out.println("Die Zelle ist null.");
+                    System.out.println("Die Zeile ist null.");
                 }
             } else {
-                System.out.println("Die Zeile ist null.");
+                System.out.println("Das Arbeitsblatt wurde nicht gefunden.");
             }
 
             } catch (FileNotFoundException e) {
