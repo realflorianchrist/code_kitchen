@@ -3,6 +3,7 @@ import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.*;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
@@ -215,29 +216,59 @@ public class CreateSQLData {
             // Öffnen Sie das Arbeitsbuch (Workbook)
             Workbook workbook = WorkbookFactory.create(fileInputStream);
 
-            // Wählen Sie das Blatt (Sheet) aus
-            Sheet sheet = workbook.getSheetAt(0);
+            Sheet targetSheet = null;
+            for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+                Sheet sheet = workbook.getSheetAt(i);
+                String sheetName = sheet.getSheetName();
+                if (sheetName.startsWith(".Index")) {
+                    targetSheet = sheet;
+                    break;
+                }
+            }
+            System.out.println(targetSheet.getSheetName());
 
-            // Geben Sie die Zellenkoordinaten an, z.B. A1, B2, etc.
+// Geben Sie die Zellenkoordinaten des Textfelds an
             int rowNumber = 45;
-            int cellNumber = 6;
+            int cellNumber = 6; // Dies ist die Spaltennummer für das Textfeld
 
-            // Holen Sie sich die Zeile
-            Row row = sheet.getRow(rowNumber);
+            Row row = targetSheet.getRow(rowNumber);
 
-            // Holen Sie sich die Zelle
-            Cell cell = row.getCell(cellNumber);
+// Überprüfen Sie, ob die Zeile existiert und nicht null ist
+            if (row != null) {
+                // Holen Sie sich die Zelle
+                Cell cell = row.getCell(cellNumber);
 
-            // Lesen Sie den Zellenwert
-            String cellValue = cell.getStringCellValue();
+                // Überprüfen Sie, ob die Zelle existiert und nicht null ist
+                if (cell != null) {
+                    // Lesen Sie den Zellenwert
+                    String cellValue = "";
 
-            // Zeigen Sie den gelesenen Wert an
-            System.out.println("Wert in Zelle F45: " + cellValue);
+                    System.out.println(cell.getCellType());
+                    // Überprüfen Sie den Zelltyp, bevor Sie auf den Zellenwert zugreifen
+                    if (cell.getCellType() == CellType.STRING) {
+                        cellValue = cell.getStringCellValue();
+                    } else if (cell.getCellType() == CellType.NUMERIC) {
+                        // Wenn die Zelle eine numerische Zelle ist, können Sie sie entsprechend abrufen
+                        cellValue = String.valueOf(cell.getNumericCellValue());
+                    } else if (cell.getCellType() == CellType.FORMULA) {
+                        // Wenn die Zelle eine Formel enthält, können Sie sie entsprechend abrufen
+                        cellValue = cell.getCellFormula();
+                    }
 
-            // Schließen Sie das Arbeitsbuch, um Ressourcen freizugeben
-            workbook.close();
-        } catch (IOException | EncryptedDocumentException ex) {
-            ex.printStackTrace();
+                    // Zeigen Sie den gelesenen Wert an
+                    System.out.println("Wert ist: " + cellValue);
+                } else {
+                    System.out.println("Die Zelle ist null.");
+                }
+            } else {
+                System.out.println("Die Zeile ist null.");
+            }
+
+            } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
