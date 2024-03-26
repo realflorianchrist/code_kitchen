@@ -203,7 +203,7 @@ public class CreateSQLData {
                         Matcher matcher = PROJECT_NUMBER_PATTERN.matcher(dirName);
                         if (matcher.find()) {
                             String projectNumber = matcher.group();
-                            if (projNr.contains(projectNumber) && searchProjectExcel(dir)) {
+                            if (projNr.contains(projectNumber) && searchProjectExcel(dir, projectNumber)) {
 //                                PROJECT_NUMBER_TO_PROJECT_INFO.computeIfAbsent(projectNumber, k -> "Test");
                                 System.out.println(projectNumber);
                                 projNr.remove(projectNumber);
@@ -217,11 +217,11 @@ public class CreateSQLData {
         }
     }
 
-    private static boolean searchProjectExcel(Path projectDirectory) {
+    private static boolean searchProjectExcel(Path projectDirectory, String projectNr) {
         try {
             // Suchmuster für die Excel-Dateien
             String[] filePatterns = {"öffnung", "oeffnung"};
-            String[] extensions = {".xlsm"};
+            String[] extensions = {".xlsm", ".xlsx"};
 
             try (Stream<Path> paths = Files.walk(projectDirectory)) {
                 Optional<Path> excelFile = paths
@@ -231,8 +231,8 @@ public class CreateSQLData {
                         for (String pattern : filePatterns) {
                             for (String extension : extensions) {
                                 if (fileName.contains(pattern) && fileName.endsWith(extension)) {
-                                    System.out.println("Excel-Datei gefunden: " + path);
-                                    readExcelFile(path);
+//                                    System.out.println("Excel-Datei gefunden: " + path);
+                                    readExcelFile(path, projectNr);
                                     return true;
                                 }
                             }
@@ -250,7 +250,7 @@ public class CreateSQLData {
     }
 
 
-    private static void readExcelFile(Path filePath) {
+    private static void readExcelFile(Path filePath, String projectNr) {
         try (FileInputStream fileInputStream = new FileInputStream(String.valueOf(filePath))) {
 
             Workbook workbook = new XSSFWorkbook(fileInputStream);
@@ -271,7 +271,7 @@ public class CreateSQLData {
                 targetSheet = workbook.getSheetAt(0);
             }
 
-            System.out.println(targetSheet.getSheetName());
+//            System.out.println(targetSheet.getSheetName());
 
             //Project Nr.
             int projectNrRowNumber = 3;
@@ -295,7 +295,7 @@ public class CreateSQLData {
                 if (row != null) {
                     Cell cell = row.getCell(projectMangerCellNumber);
                     if (cell != null) {
-                        System.out.println(cell);
+//                        System.out.println(cell);
                     } else {
                         System.out.println("Die Zelle ist null.");
                     }
