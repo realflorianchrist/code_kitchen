@@ -20,6 +20,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,12 +41,12 @@ public class CreateSQLData {
     public static void main(String[] args) {
 //        connectToSQLServer();
 //        clearTables();
-//        readCADProjectsFromU();
+        readCADProjectsFromU();
 //        readPlotfilePathsFromU();
 //        printFoundPlotfiles();
-//        readProjectInfoFromK();
+        readProjectInfoFromK();
 //        System.out.println(PROJECT_NUMBER_TO_PROJECT_INFO);
-        readExcelFile();
+//        readExcelFile();
     }
 
     public static void connectToSQLServer() {
@@ -201,6 +202,7 @@ public class CreateSQLData {
                             String projectNumber = matcher.group();
                             if (PROJECT_NUMBERS.contains(projectNumber)) {
                                 PROJECT_NUMBER_TO_PROJECT_INFO.computeIfAbsent(projectNumber, k -> "Test");
+                                searchProjectExcel(dir);
                             }
                         }
                         return FileVisitResult.CONTINUE;
@@ -211,11 +213,37 @@ public class CreateSQLData {
         }
     }
 
+    private static void searchProjectExcel(Path projectDirectory) {
+        try {
+            // Suchmuster für die Excel-Dateien
+            String[] filePatterns = {"öffnung", "oeffnung"};
+            String[] extensions = {".xlsm"};
+
+            Files.walkFileTree(projectDirectory, new SimpleFileVisitor<>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                    String fileName = file.getFileName().toString().toLowerCase();
+                    for (String pattern : filePatterns) {
+                        for (String extension : extensions) {
+                            if (fileName.contains(pattern) && fileName.endsWith(extension)) {
+                                System.out.println("Excel-Datei gefunden: " + file);
+                                return FileVisitResult.CONTINUE;
+                            }
+                        }
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     private static void readExcelFile() {
         try (FileInputStream fileInputStream = new FileInputStream("plan_directory/src/main/resources"
             + "/testdata/K/9000/9925/P100_Projektschluessel/324135F-Projekteroeffnung.xlsm")) {
-            // Öffnen Sie das Arbeitsbuch (Workbook)
-//            Workbook workbook = WorkbookFactory.create(fileInputStream);
+
             Workbook workbook = new XSSFWorkbook(fileInputStream);
 
             Sheet targetSheet = null;
@@ -229,40 +257,29 @@ public class CreateSQLData {
             }
             System.out.println(targetSheet.getSheetName());
 
-// Geben Sie die Zellenkoordinaten des Textfelds an
-            int rowNumber = 44;
-            int cellNumber = 5;
+            //Project Nr.
+            int projectNrRowNumber = 3;
+            int projectNrCellNumber = 2;
+
+            //contractor
+            int contractorRowNumber = 5;
+            int contractorCellNumber = 2;
+
+            //project manager
+            int projectMangerRowNumber = 11;
+            int projectMangerCellNumber = 2;
+
+            //CAD project supervisor
+            int CADProjectSupRowNumber = 44;
+            int CADProjectSupCellNumber = 5;
 
 
             if (targetSheet != null) {
-                Row row = targetSheet.getRow(rowNumber);
+                Row row = targetSheet.getRow(projectMangerRowNumber);
                 if (row != null) {
-                    Cell cell = row.getCell(cellNumber);
+                    Cell cell = row.getCell(projectMangerCellNumber);
                     if (cell != null) {
-                        // Überprüfen Sie den Zelltyp
-                        switch (cell.getCellType()) {
-                        case STRING:
-                            String cellValue = cell.getStringCellValue();
-                            System.out.println("Wert in der Zelle: " + cellValue);
-                            break;
-                        case NUMERIC:
-                            double numericCellValue = cell.getNumericCellValue();
-                            System.out.println("Wert in der Zelle: " + numericCellValue);
-                            break;
-                        case BOOLEAN:
-                            boolean booleanCellValue = cell.getBooleanCellValue();
-                            System.out.println("Wert in der Zelle: " + booleanCellValue);
-                            break;
-                        case FORMULA:
-                            String formulaCellValue = cell.getCellFormula();
-                            System.out.println("Wert in der Zelle: " + formulaCellValue);
-                            break;
-                        case BLANK:
-                            System.out.println("Die Zelle ist leer.");
-                            break;
-                        default:
-                            System.out.println("Der Zelltyp wird nicht unterstützt.");
-                        }
+                        System.out.println(cell);
                     } else {
                         System.out.println("Die Zelle ist null.");
                     }
@@ -273,10 +290,7 @@ public class CreateSQLData {
                 System.out.println("Das Arbeitsblatt wurde nicht gefunden.");
             }
 
-            } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-
-        } catch (IOException e) {
+            } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -342,5 +356,7 @@ public class CreateSQLData {
             System.out.println();
         }
     } */
+
+
 
 }
