@@ -3,6 +3,7 @@ import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -19,6 +20,7 @@ import java.sql.SQLException;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -189,6 +191,7 @@ public class CreateSQLData {
     }
 
     public static void readProjectInfoFromK() {
+        Set<String> projNr = PROJECT_NUMBERS;
         try {
             Files.walkFileTree(Paths.get(PROJECT_DIRECTORY), EnumSet.noneOf(FileVisitOption.class), Integer.MAX_VALUE,
                 new SimpleFileVisitor<>() {
@@ -200,9 +203,10 @@ public class CreateSQLData {
                         Matcher matcher = PROJECT_NUMBER_PATTERN.matcher(dirName);
                         if (matcher.find()) {
                             String projectNumber = matcher.group();
-                            if (PROJECT_NUMBERS.contains(projectNumber)) {
-                                PROJECT_NUMBER_TO_PROJECT_INFO.computeIfAbsent(projectNumber, k -> "Test");
-                                searchProjectExcel(dir);
+                            if (projNr.contains(projectNumber) && searchProjectExcel(dir)) {
+//                                PROJECT_NUMBER_TO_PROJECT_INFO.computeIfAbsent(projectNumber, k -> "Test");
+                                System.out.println(projectNumber);
+                                projNr.remove(projectNumber);
                             }
                         }
                         return FileVisitResult.CONTINUE;
@@ -213,36 +217,41 @@ public class CreateSQLData {
         }
     }
 
-    private static void searchProjectExcel(Path projectDirectory) {
+    private static boolean searchProjectExcel(Path projectDirectory) {
         try {
             // Suchmuster für die Excel-Dateien
             String[] filePatterns = {"öffnung", "oeffnung"};
             String[] extensions = {".xlsm"};
 
-            Files.walkFileTree(projectDirectory, new SimpleFileVisitor<>() {
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                    String fileName = file.getFileName().toString().toLowerCase();
-                    for (String pattern : filePatterns) {
-                        for (String extension : extensions) {
-                            if (fileName.contains(pattern) && fileName.endsWith(extension)) {
-                                System.out.println("Excel-Datei gefunden: " + file);
-                                return FileVisitResult.CONTINUE;
+            try (Stream<Path> paths = Files.walk(projectDirectory)) {
+                Optional<Path> excelFile = paths
+                    .filter(Files::isRegularFile)
+                    .filter(path -> {
+                        String fileName = path.getFileName().toString().toLowerCase();
+                        for (String pattern : filePatterns) {
+                            for (String extension : extensions) {
+                                if (fileName.contains(pattern) && fileName.endsWith(extension)) {
+                                    System.out.println("Excel-Datei gefunden: " + path);
+                                    readExcelFile(path);
+                                    return true;
+                                }
                             }
                         }
-                    }
-                    return FileVisitResult.CONTINUE;
-                }
-            });
+                        return false;
+                    })
+                    .findFirst();
+
+                return excelFile.isPresent();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
 
-    private static void readExcelFile() {
-        try (FileInputStream fileInputStream = new FileInputStream("plan_directory/src/main/resources"
-            + "/testdata/K/9000/9925/P100_Projektschluessel/324135F-Projekteroeffnung.xlsm")) {
+    private static void readExcelFile(Path filePath) {
+        try (FileInputStream fileInputStream = new FileInputStream(String.valueOf(filePath))) {
 
             Workbook workbook = new XSSFWorkbook(fileInputStream);
 
@@ -250,11 +259,18 @@ public class CreateSQLData {
             for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
                 Sheet sheet = workbook.getSheetAt(i);
                 String sheetName = sheet.getSheetName();
-                if (sheetName.toLowerCase().startsWith(".index")) {
+                if (sheetName.toLowerCase().startsWith(".index")
+                    || sheetName.toLowerCase().startsWith(".")
+                    || containsNumber(sheetName)) {
                     targetSheet = sheet;
                     break;
                 }
             }
+
+            if (targetSheet == null) {
+                targetSheet = workbook.getSheetAt(0);
+            }
+
             System.out.println(targetSheet.getSheetName());
 
             //Project Nr.
@@ -293,6 +309,15 @@ public class CreateSQLData {
             } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static boolean containsNumber(String str) {
+        for (char c : str.toCharArray()) {
+            if (Character.isDigit(c)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /*
