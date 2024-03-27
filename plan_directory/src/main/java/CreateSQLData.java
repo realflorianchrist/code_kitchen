@@ -1,11 +1,8 @@
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
-import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
@@ -20,7 +17,6 @@ import java.sql.SQLException;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -204,8 +200,6 @@ public class CreateSQLData {
                         if (matcher.find()) {
                             String projectNumber = matcher.group();
                             if (projNr.contains(projectNumber) && searchProjectExcel(dir, projectNumber)) {
-//                                PROJECT_NUMBER_TO_PROJECT_INFO.computeIfAbsent(projectNumber, k -> "Test");
-                                System.out.println(projectNumber);
                                 projNr.remove(projectNumber);
                             }
                         }
@@ -231,7 +225,6 @@ public class CreateSQLData {
                         for (String pattern : filePatterns) {
                             for (String extension : extensions) {
                                 if (fileName.contains(pattern) && fileName.endsWith(extension)) {
-//                                    System.out.println("Excel-Datei gefunden: " + path);
                                     readExcelFile(path, projectNr);
                                     return true;
                                 }
@@ -252,63 +245,37 @@ public class CreateSQLData {
 
     private static void readExcelFile(Path filePath, String projectNr) {
         try (FileInputStream fileInputStream = new FileInputStream(String.valueOf(filePath))) {
-
             Workbook workbook = new XSSFWorkbook(fileInputStream);
+            Sheet targetSheet = getSheet(workbook);
 
-            Sheet targetSheet = null;
-            for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
-                Sheet sheet = workbook.getSheetAt(i);
-                String sheetName = sheet.getSheetName();
-                if (sheetName.toLowerCase().startsWith(".index")
-                    || sheetName.toLowerCase().startsWith(".")
-                    || containsNumber(sheetName)) {
-                    targetSheet = sheet;
-                    break;
-                }
-            }
+            String contractor = getCellValue(targetSheet, 5, 2);
+            String projectManager = getCellValue(targetSheet, 11, 2);
+            String cadProjectSupervisor = getCellValue(targetSheet, 44, 5);
 
-            if (targetSheet == null) {
-                targetSheet = workbook.getSheetAt(0);
-            }
+            insertIntoProjects(projectNr, contractor, projectManager, cadProjectSupervisor);
 
-//            System.out.println(targetSheet.getSheetName());
-
-            //Project Nr.
-            int projectNrRowNumber = 3;
-            int projectNrCellNumber = 2;
-
-            //contractor
-            int contractorRowNumber = 5;
-            int contractorCellNumber = 2;
-
-            //project manager
-            int projectMangerRowNumber = 11;
-            int projectMangerCellNumber = 2;
-
-            //CAD project supervisor
-            int CADProjectSupRowNumber = 44;
-            int CADProjectSupCellNumber = 5;
-
-
-            if (targetSheet != null) {
-                Row row = targetSheet.getRow(projectMangerRowNumber);
-                if (row != null) {
-                    Cell cell = row.getCell(projectMangerCellNumber);
-                    if (cell != null) {
-//                        System.out.println(cell);
-                    } else {
-                        System.out.println("Die Zelle ist null.");
-                    }
-                } else {
-                    System.out.println("Die Zeile ist null.");
-                }
-            } else {
-                System.out.println("Das Arbeitsblatt wurde nicht gefunden.");
-            }
-
-            } catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static Sheet getSheet(Workbook workbook) {
+        Sheet targetSheet = null;
+        for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+            Sheet sheet = workbook.getSheetAt(i);
+            String sheetName = sheet.getSheetName();
+            if (sheetName.toLowerCase().startsWith(".index")
+                || sheetName.toLowerCase().startsWith(".")
+                || containsNumber(sheetName)) {
+                targetSheet = sheet;
+                break;
+            }
+        }
+
+        if (targetSheet == null) {
+            targetSheet = workbook.getSheetAt(0);
+        }
+        return targetSheet;
     }
 
     private static boolean containsNumber(String str) {
@@ -318,6 +285,42 @@ public class CreateSQLData {
             }
         }
         return false;
+    }
+
+    private static String getCellValue(Sheet sheet, int rowNumber, int cellNumber) {
+        Row row = sheet.getRow(rowNumber);
+        if (row != null) {
+            Cell cell = row.getCell(cellNumber);
+            if (cell != null) {
+                return cell.toString();
+            }
+        }
+        return null;
+    }
+
+    private static void insertIntoProjects(String projectNr, String contractor,
+                                           String projectManager, String cadProjectSupervisor) {
+
+        try (Connection connection = DATA_SOURCE.getConnection()) {
+            String sql = "INSERT INTO projects (project_nr, contractor, project_manager, cad_project_supervisor) " +
+                "VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE contractor = ?, project_manager = ?, cad_project_supervisor = ?";
+
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.setString(1, projectNr);
+                preparedStatement.setString(2, contractor);
+                preparedStatement.setString(3, projectManager);
+                preparedStatement.setString(4, cadProjectSupervisor);
+                // Für das Update im Fall eines Duplikatschlüssels
+                preparedStatement.setString(5, contractor);
+                preparedStatement.setString(6, projectManager);
+                preparedStatement.setString(7, cadProjectSupervisor);
+
+                preparedStatement.executeUpdate();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     /*
