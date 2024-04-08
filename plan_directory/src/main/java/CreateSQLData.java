@@ -1,7 +1,12 @@
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
+import org.apache.pdfbox.Loader;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDDocumentInformation;
+
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.FileVisitOption;
@@ -39,12 +44,13 @@ public class CreateSQLData {
     public static void main(String[] args) {
 //        connectToSQLServer();
 //        clearTables();
-        readCADProjectsFromU();
+//        readCADProjectsFromU();
 //        readPlotfilePathsFromU();
 //        printFoundPlotfiles();
-        readProjectInfoFromK();
+//        readProjectInfoFromK();
 //        System.out.println(PROJECT_NUMBER_TO_PROJECT_INFO);
 //        readExcelFile();
+        readMetaDataFromPDF("plan_directory/src/main/resources/testdata/U/9000/9246/frei/f_9246_4180-0_si_ebenrain_fp.pdf");
     }
 
     public static void connectToSQLServer() {
@@ -172,6 +178,26 @@ public class CreateSQLData {
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void readMetaDataFromPDF(String pdfFile) {
+        try (PDDocument document = Loader.loadPDF(new File(pdfFile))) {
+
+            PDDocumentInformation info = document.getDocumentInformation();
+
+            System.out.println("Title: " + info.getTitle());
+            System.out.println("Author: " + info.getAuthor());
+            System.out.println("Subject: " + info.getSubject());
+            System.out.println("Keywords: " + info.getKeywords());
+            System.out.println("Creator: " + info.getCreator());
+            System.out.println("Producer: " + info.getProducer());
+            System.out.println("Creation Date: " + info.getCreationDate());
+            System.out.println("Modification Date: " + info.getModificationDate());
+            System.out.println("Trapped: " + info.getTrapped());
+
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
