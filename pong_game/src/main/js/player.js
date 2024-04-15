@@ -1,5 +1,8 @@
 import {GameObject} from "./game-object.js";
 
+const canvas = document.getElementById('pong-game');
+const context = canvas.getContext('2d');
+
 export class Player extends GameObject {
     constructor(x, y, height, width, score) {
         super(x, y, height, width);
@@ -13,13 +16,13 @@ export class Player extends GameObject {
 
     moveUp() {
         if (this.y - this.height / 2 > 0) {
-            this.move(0, -1);
+            this.move(0, -0.1);
         }
     }
 
     moveDown() {
         if (this.y + this.height / 2 < canvas.height) {
-            this.move(0, 1);
+            this.move(0, 0.1);
         }
     }
 
