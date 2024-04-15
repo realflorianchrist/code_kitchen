@@ -9,6 +9,8 @@ class PongGame {
         this.canvas = canvas;
         this.context = context;
 
+        this.paused = false;
+        this.intervalId = null;
         this.registered = false;
 
         const playerHeight = this.canvas.height * 0.15;
@@ -32,28 +34,38 @@ class PongGame {
     drawScore() {
         this.context.fillStyle = 'rgb(23,255,0)';
         this.context.font = '24px Arial';
+        this.context.textAlign = 'center';
 
         this.context.fillText(this.player1.score + ' : ' + this.player2.score, this.canvas.width / 2, 50);
     }
 
     handleInput() {
         if (!this.registered) {
-            document.addEventListener('keydown', (event) => {
-                switch (event.key) {
-                    case 'w':
-                        this.player1.moveUp();
-                        break;
-                    case 's':
-                        this.player1.moveDown();
-                        break;
-                    case 'ArrowUp':
-                        this.player2.moveUp();
-                        break;
-                    case 'ArrowDown':
-                        this.player2.moveDown();
-                        break;
+            const playerControlListener = (event) => {
+                if (!this.paused) {
+                    const keyActions = {
+                        'w': () => this.player1.moveUp(),
+                        's': () => this.player1.moveDown(),
+                        'ArrowUp': () => this.player2.moveUp(),
+                        'ArrowDown': () => this.player2.moveDown()
+                    };
+
+                    const action = keyActions[event.key];
+                    if (action) {
+                        action();
+                    }
                 }
-            });
+            };
+
+            const pauseMenuListener = (event) => {
+                if (event.key === 'Escape') {
+                    this.pause();
+                }
+            };
+
+            document.addEventListener('keydown', playerControlListener);
+            document.addEventListener('keydown', pauseMenuListener);
+
             this.registered = true;
         }
     }
@@ -77,11 +89,20 @@ class PongGame {
     }
 
     start() {
-        setInterval(() => {
+        this.intervalId = setInterval(() => {
             this.drawGame();
             this.handleInput();
             this.step();
         }, 1000 / 20);
+    }
+
+    pause() {
+        if (!this.paused) {
+            clearInterval(this.intervalId);
+        } else {
+            this.start();
+        }
+        this.paused = !this.paused;
     }
 }
 
