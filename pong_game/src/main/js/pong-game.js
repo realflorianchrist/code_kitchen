@@ -9,7 +9,7 @@ class PongGame {
         this.canvas = canvas;
         this.context = context;
 
-        this.paused = false;
+        this.paused = true;
         this.intervalId = null;
         this.registered = false;
 
@@ -89,11 +89,13 @@ class PongGame {
     }
 
     start() {
-        this.intervalId = setInterval(() => {
-            this.drawGame();
-            this.handleInput();
-            this.step();
-        }, 1000 / 20);
+        if (!this.paused) {
+            this.intervalId = setInterval(() => {
+                this.drawGame();
+                this.handleInput();
+                this.step();
+            }, 1000 / 20);
+        }
     }
 
     pause() {
