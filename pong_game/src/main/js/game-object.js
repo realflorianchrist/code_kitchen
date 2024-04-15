@@ -1,5 +1,6 @@
 export class GameObject {
-    constructor(x, y, height, width) {
+    constructor(canvas, x, y, height, width) {
+        this.canvas = canvas;
         this.x = x;
         this.y = y;
         this.height = height;

@@ -11,20 +11,29 @@ class PongGame {
 
         this.registered = false;
 
-        const playerHeight = this.canvas.height * 0.2;
-        const playerWidth = 5;
-        this.player1 = new Player(playerWidth*2, this.canvas.height / 2, playerHeight, playerWidth, 0);
-        this.player2 = new Player(this.canvas.width - playerWidth*2, this.canvas.height / 2, playerHeight, playerWidth, 0);
+        const playerHeight = this.canvas.height * 0.15;
+        const playerWidth = 10;
+        const playerSpeed = 20;
+        this.player1 = new Player(canvas, playerWidth*2, this.canvas.height / 2, playerHeight, playerWidth, 0, playerSpeed);
+        this.player2 = new Player(canvas, this.canvas.width - playerWidth*2, this.canvas.height / 2, playerHeight, playerWidth, 0, playerSpeed);
 
-        const ballSpeed = 1;
-        this.ball = new Ball(this.canvas.width / 2, this.canvas.height / 2, 5, ballSpeed, ballSpeed);
+        const ballSpeed = 10;
+        this.ball = new Ball(canvas, this.canvas.width / 2, this.canvas.height / 2, 10, ballSpeed, ballSpeed);
     }
 
     drawGame() {
         this.context.clearRect(0, 0, canvas.width, canvas.height);
+        this.drawScore();
         this.player1.draw(this.context);
         this.player2.draw(this.context);
         this.ball.draw(this.context);
+    }
+
+    drawScore() {
+        this.context.fillStyle = 'rgb(23,255,0)';
+        this.context.font = '24px Arial';
+
+        this.context.fillText(this.player1.score + ' : ' + this.player2.score, this.canvas.width / 2, 50);
     }
 
     handleInput() {
@@ -59,11 +68,11 @@ class PongGame {
         }
         if (this.ball.x - this.ball.radius < 0) {
             this.player2.increaseScore();
-            this.ball = new Ball(this.canvas.width / 2, this.canvas.height / 2, 5, 1, 1);
+            this.ball.reset();
         }
         if (this.ball.x + this.ball.radius > this.canvas.width) {
             this.player1.increaseScore();
-            this.ball = new Ball(this.canvas.width / 2, this.canvas.height / 2, 5, 1, 1);
+            this.ball.reset();
         }
     }
 
