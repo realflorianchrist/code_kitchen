@@ -16,13 +16,13 @@ export class Player extends GameObject {
 
     moveUp() {
         if (this.y - this.height / 2 > 0) {
-            this.move(0, -0.1);
+            this.move(0, -5);
         }
     }
 
     moveDown() {
         if (this.y + this.height / 2 < canvas.height) {
-            this.move(0, 0.1);
+            this.move(0, 5);
         }
     }
 

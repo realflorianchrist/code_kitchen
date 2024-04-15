@@ -9,6 +9,8 @@ class PongGame {
         this.canvas = canvas;
         this.context = context;
 
+        this.registered = false;
+
         const playerHeight = this.canvas.height * 0.2;
         const playerWidth = 5;
         this.player1 = new Player(playerWidth*2, this.canvas.height / 2, playerHeight, playerWidth, 0);
@@ -26,22 +28,25 @@ class PongGame {
     }
 
     handleInput() {
-        document.addEventListener('keydown', (event) => {
-            switch (event.key) {
-                case 'w':
-                    this.player1.moveUp();
-                    break;
-                case 's':
-                    this.player1.moveDown();
-                    break;
-                case 'ArrowUp':
-                    this.player2.moveUp();
-                    break;
-                case 'ArrowDown':
-                    this.player2.moveDown();
-                    break;
-            }
-        });
+        if (!this.registered) {
+            document.addEventListener('keydown', (event) => {
+                switch (event.key) {
+                    case 'w':
+                        this.player1.moveUp();
+                        break;
+                    case 's':
+                        this.player1.moveDown();
+                        break;
+                    case 'ArrowUp':
+                        this.player2.moveUp();
+                        break;
+                    case 'ArrowDown':
+                        this.player2.moveDown();
+                        break;
+                }
+            });
+            this.registered = true;
+        }
     }
 
     step() {
