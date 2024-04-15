@@ -1,3 +1,9 @@
+@import url('https://fonts.cdnfonts.com/css/federapolis');
+
+* {
+    font-family: 'Federapolis', sans-serif;
+}
+
 body, html {
     overflow: hidden;
     padding: 0;

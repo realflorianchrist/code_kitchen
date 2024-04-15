@@ -4,10 +4,14 @@ import {Ball} from "./ball.js";
 const canvas = document.getElementById('pong-game');
 const context = canvas.getContext('2d');
 
+
 class PongGame {
     constructor(canvas, context) {
         this.canvas = canvas;
         this.context = context;
+
+        this.menu = document.getElementById('menu');
+        this.startButton = document.getElementById('start-button');
 
         this.paused = true;
         this.intervalId = null;
@@ -88,25 +92,37 @@ class PongGame {
         }
     }
 
+    toggleStartButton() {
+        this.startButton.addEventListener('click', () => {
+            this.pause();
+            if (this.paused) {
+                this.menu.style.display = 'block';
+            } else {
+                this.menu.style.display = 'none';
+            }
+        });
+    }
+
     start() {
-        if (!this.paused) {
-            this.intervalId = setInterval(() => {
+        this.intervalId = setInterval(() => {
+            if (!this.paused) {
                 this.drawGame();
                 this.handleInput();
                 this.step();
-            }, 1000 / 20);
-        }
+            }
+        }, 1000 / 20);
     }
 
     pause() {
-        if (!this.paused) {
-            clearInterval(this.intervalId);
-        } else {
+        if (this.paused) {
             this.start();
+        } else {
+            clearInterval(this.intervalId);
         }
+        this.toggleStartButton();
         this.paused = !this.paused;
     }
 }
 
 const game = new PongGame(canvas, context);
-game.start();
+game.toggleStartButton();
