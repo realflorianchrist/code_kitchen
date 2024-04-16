@@ -64,6 +64,7 @@ class PongGame {
             const pauseMenuListener = (event) => {
                 if (event.key === 'Escape') {
                     this.pause();
+                    this.toggleStartScreen();
                 }
             };
 
@@ -92,15 +93,20 @@ class PongGame {
         }
     }
 
-    toggleStartButton() {
+    startScreen() {
         this.startButton.addEventListener('click', () => {
+            this.menu.style.opacity = '0';
+            this.startButton.textContent = 'resume';
             this.pause();
-            if (this.paused) {
-                this.menu.style.display = 'block';
-            } else {
-                this.menu.style.display = 'none';
-            }
         });
+    }
+
+    toggleStartScreen() {
+        if (this.paused) {
+            this.menu.style.opacity = '1';
+        } else {
+            this.menu.style.opacity = '0';
+        }
     }
 
     start() {
@@ -119,10 +125,9 @@ class PongGame {
         } else {
             clearInterval(this.intervalId);
         }
-        this.toggleStartButton();
         this.paused = !this.paused;
     }
 }
 
 const game = new PongGame(canvas, context);
-game.toggleStartButton();
+game.startScreen();

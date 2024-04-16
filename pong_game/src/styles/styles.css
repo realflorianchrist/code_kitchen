@@ -34,4 +34,5 @@ body, html {
     background-color: transparent;
     border-color: rgb(23,255,0);
     color: rgb(23,255,0);
+    outline: none;
 }
