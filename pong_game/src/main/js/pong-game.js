@@ -3,15 +3,16 @@ import {Ball} from "./ball.js";
 
 const canvas = document.getElementById('pong-game');
 const context = canvas.getContext('2d');
+const menu = document.getElementById('menu');
+const startButton = document.getElementById('start-button');
 
-
-class PongGame {
-    constructor(canvas, context) {
+export class PongGame {
+    constructor(canvas, context, menu, startButton) {
         this.canvas = canvas;
         this.context = context;
+        this.menu = menu;
+        this.startButton = startButton;
 
-        this.menu = document.getElementById('menu');
-        this.startButton = document.getElementById('start-button');
 
         this.paused = true;
         this.intervalId = null;
@@ -37,7 +38,7 @@ class PongGame {
 
     drawScore() {
         this.context.fillStyle = 'rgb(23,255,0)';
-        this.context.font = '24px Arial';
+        this.context.font = '24px Federapolis';
         this.context.textAlign = 'center';
 
         this.context.fillText(this.player1.score + ' : ' + this.player2.score, this.canvas.width / 2, 50);
@@ -95,7 +96,7 @@ class PongGame {
 
     startScreen() {
         this.startButton.addEventListener('click', () => {
-            this.menu.style.opacity = '0';
+            this.menu.style.display = 'none';
             this.startButton.textContent = 'resume';
             this.pause();
         });
@@ -103,9 +104,9 @@ class PongGame {
 
     toggleStartScreen() {
         if (this.paused) {
-            this.menu.style.opacity = '1';
+            this.menu.style.display = 'flex';
         } else {
-            this.menu.style.opacity = '0';
+            this.menu.style.display = 'none';
         }
     }
 
@@ -129,5 +130,5 @@ class PongGame {
     }
 }
 
-const game = new PongGame(canvas, context);
+const game = new PongGame(canvas, context, menu, startButton);
 game.startScreen();

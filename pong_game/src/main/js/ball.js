@@ -1,10 +1,7 @@
 import {GameObject} from "./game-object.js";
 
-const canvas = document.getElementById('pong-game');
-const context = canvas.getContext('2d');
-
 export class Ball extends GameObject {
-constructor(canvas, x, y, radius, dx, dy) {
+    constructor(canvas, x, y, radius, dx, dy) {
         super(canvas, x, y, radius * 2, radius * 2);
         this.radius = radius;
         this.dx = dx;
