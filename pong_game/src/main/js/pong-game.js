@@ -91,7 +91,7 @@ export class PongGame {
             this.player1.increaseScore();
             this.ball.reset();
         }
-        if (this.player1.score >= 2 || this.player2.score >= 2) {
+        if (this.player1.score >= 10 || this.player2.score >= 10) {
             this.gameOverScreen();
             this.player1.resetScore();
             this.player2.resetScore();
@@ -101,6 +101,7 @@ export class PongGame {
     startScreen() {
         this.startButton.addEventListener('click', () => {
             this.menu.style.display = 'none';
+            this.title.textContent = 'Pong Game';
             this.startButton.textContent = 'resume';
             this.pause();
         });
