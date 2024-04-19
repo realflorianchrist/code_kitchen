@@ -27,4 +27,8 @@ export class Player extends GameObject {
     increaseScore() {
         this.score++;
     }
+
+    resetScore() {
+        this.score = 0;
+    }
 }

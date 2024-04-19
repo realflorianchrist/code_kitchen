@@ -4,15 +4,18 @@ import {Ball} from "./ball.js";
 const canvas = document.getElementById('pong-game');
 const context = canvas.getContext('2d');
 const menu = document.getElementById('menu');
+const title = document.getElementById('title');
 const startButton = document.getElementById('start-button');
+const score = document.getElementById('score');
 
 export class PongGame {
     constructor(canvas, context, menu, startButton) {
         this.canvas = canvas;
         this.context = context;
         this.menu = menu;
+        this.title = title;
         this.startButton = startButton;
-
+        this.score = score;
 
         this.paused = true;
         this.intervalId = null;
@@ -37,11 +40,7 @@ export class PongGame {
     }
 
     drawScore() {
-        this.context.fillStyle = 'rgb(23,255,0)';
-        this.context.font = '24px Federapolis';
-        this.context.textAlign = 'center';
-
-        this.context.fillText(this.player1.score + ' : ' + this.player2.score, this.canvas.width / 2, 50);
+        this.score.textContent = `${this.player1.score} : ${this.player2.score}`;
     }
 
     handleInput() {
@@ -92,6 +91,11 @@ export class PongGame {
             this.player1.increaseScore();
             this.ball.reset();
         }
+        if (this.player1.score >= 2 || this.player2.score >= 2) {
+            this.gameOverScreen();
+            this.player1.resetScore();
+            this.player2.resetScore();
+        }
     }
 
     startScreen() {
@@ -108,6 +112,13 @@ export class PongGame {
         } else {
             this.menu.style.display = 'none';
         }
+    }
+
+    gameOverScreen() {
+        this.title.textContent = 'Game Over';
+        this.startButton.textContent = 'restart';
+        this.pause();
+        this.toggleStartScreen();
     }
 
     start() {
