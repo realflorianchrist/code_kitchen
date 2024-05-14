@@ -1,6 +1,29 @@
 * {
+    color: white;
     margin: 0;
     padding: 0;
+}
+
+body {
+    background-color: black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+}
+
+#add-area {
+    margin: 20px;
+}
+
+#add-area input,
+#add-area button {
+    background-color: transparent;
+    border: 1px solid white;
+    border-radius: 5px;
+    padding: 5px;
 }
 
 #todo-list {
@@ -10,8 +33,28 @@
 
 #todo-list li {
     display: flex;
+    margin: 10px 0;
 }
 
-#todo-list input {
+#todo-list label {
     margin-left: auto;
 }
+
+#todo-list input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+#todo-list span {
+    position: absolute;
+    height: 15px;
+    width: 15px;
+    background-color: black;
+    border: 1px solid white;
+    border-radius: 5px;
+}
+
+

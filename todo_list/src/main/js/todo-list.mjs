@@ -8,11 +8,15 @@ for (const todo of getTodos()) {
     const listItem = document.createElement('li');
     const todoItem = document.createElement("div");
     todoItem.textContent = todo.text;
+    const label = document.createElement("label");
     const checkbox = document.createElement("input");
+    const span = document.createElement("span");
     checkbox.type = "checkbox";
 
     listItem.appendChild(todoItem);
-    listItem.appendChild(checkbox);
+    label.appendChild(checkbox);
+    label.appendChild(span);
+    listItem.appendChild(label);
 
     todoList.appendChild(listItem);
 }
