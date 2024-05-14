@@ -1,7 +1,11 @@
 const database = {
     todos: [
-        { id: 1, todo: 'test' }
+        { id: 1, text: 'test' }
     ]
+}
+
+export function getTodos() {
+    return database.todos;
 }
 
 export function getTodoById(id) {
