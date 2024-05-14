@@ -18,12 +18,17 @@ body {
     margin: 20px;
 }
 
-#add-area input,
-#add-area button {
+#input-field,
+#add-button {
     background-color: transparent;
     border: 1px solid white;
     border-radius: 5px;
     padding: 5px;
+}
+
+#input-field:hover,
+#add-button:hover {
+    background-color: #232323;
 }
 
 #todo-list {
@@ -36,11 +41,11 @@ body {
     margin: 10px 0;
 }
 
-#todo-list label {
+.container {
     margin-left: auto;
 }
 
-#todo-list input[type="checkbox"] {
+.container input[type="checkbox"] {
     position: absolute;
     opacity: 0;
     cursor: pointer;
@@ -48,13 +53,42 @@ body {
     width: 0;
 }
 
-#todo-list span {
+.checkmark {
     position: absolute;
-    height: 15px;
-    width: 15px;
+    height: 17px;
+    width: 17px;
     background-color: black;
     border: 1px solid white;
     border-radius: 5px;
+}
+
+.container:hover input ~ .checkmark  {
+    background-color: #737272;
+}
+
+.container input:checked ~ .checkmark {
+    background-color: #2196F3;
+}
+
+.checkmark:after {
+    content: "";
+    display: none;
+    position: absolute;
+}
+
+.container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.container .checkmark:after {
+    left: 4px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
 }
 
 

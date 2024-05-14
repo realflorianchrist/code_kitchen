@@ -9,8 +9,10 @@ for (const todo of getTodos()) {
     const todoItem = document.createElement("div");
     todoItem.textContent = todo.text;
     const label = document.createElement("label");
+    label.classList.add("container");
     const checkbox = document.createElement("input");
     const span = document.createElement("span");
+    span.classList.add("checkmark")
     checkbox.type = "checkbox";
 
     listItem.appendChild(todoItem);
