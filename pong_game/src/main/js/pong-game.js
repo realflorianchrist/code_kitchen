@@ -9,7 +9,7 @@ const startButton = document.getElementById('start-button');
 const score = document.getElementById('score');
 
 export class PongGame {
-    constructor(canvas, context, menu, startButton) {
+    constructor() {
         this.canvas = canvas;
         this.context = context;
         this.menu = menu;
