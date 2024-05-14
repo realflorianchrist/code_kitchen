@@ -5,9 +5,16 @@ const addButton = document.getElementById("add-button");
 const todoList = document.getElementById('todo-list');
 
 for (const todo of getTodos()) {
-    const todoItem = document.createElement('li');
+    const listItem = document.createElement('li');
+    const todoItem = document.createElement("div");
     todoItem.textContent = todo.text;
-    todoList.appendChild(todoItem);
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+
+    listItem.appendChild(todoItem);
+    listItem.appendChild(checkbox);
+
+    todoList.appendChild(listItem);
 }
 
 addButton.onclick = () => {
