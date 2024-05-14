@@ -14,4 +14,6 @@ export function getTodoById(id) {
 
 export function addTodo(todo) {
     database.todos.push(todo);
+    console.log(database.todos.length);
+    console.log(database.todos[database.todos.length - 1]);
 }
