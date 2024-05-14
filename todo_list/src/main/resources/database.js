@@ -20,7 +20,7 @@ export function getTodoById(id) {
 export function addTodo(text) {
     let lastElement = database.todos.slice(-1);
 
-    const newTodo = { id: lastElement.id + 1, text };
+    const newTodo = { id: lastElement.id + 1, text: text };
 
     database.todos.push(newTodo);
 
