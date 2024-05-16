@@ -11,13 +11,16 @@ for (const todo of getTodos()) {
     const label = document.createElement("label");
     label.classList.add("container");
     const checkbox = document.createElement("input");
-    const span = document.createElement("span");
-    span.classList.add("checkmark")
     checkbox.type = "checkbox";
+    const span = document.createElement("span");
+    span.classList.add("checkmark");
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = 'delete';
 
     listItem.appendChild(todoItem);
     label.appendChild(checkbox);
     label.appendChild(span);
+    label.appendChild(deleteButton);
     listItem.appendChild(label);
 
     todoList.appendChild(listItem);

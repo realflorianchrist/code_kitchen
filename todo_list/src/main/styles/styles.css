@@ -19,7 +19,7 @@ body {
 }
 
 #input-field,
-#add-button {
+button {
     background-color: transparent;
     border: 1px solid white;
     border-radius: 5px;
@@ -27,26 +27,27 @@ body {
 }
 
 #input-field:hover,
-#add-button:hover {
+button:hover {
     background-color: #232323;
 }
 
 #todo-list {
     list-style: none;
-    width: 10%;
 }
 
 #todo-list li {
+    align-items: center;
     display: flex;
     margin: 10px 0;
 }
 
 .container {
+    align-items: center;
+    display: flex;
     margin-left: auto;
 }
 
 .container input[type="checkbox"] {
-    position: absolute;
     opacity: 0;
     cursor: pointer;
     height: 0;
@@ -54,12 +55,15 @@ body {
 }
 
 .checkmark {
-    position: absolute;
+    /*position: absolute;*/
+    display: flex;
+    flex-direction: column;
     height: 17px;
     width: 17px;
     background-color: black;
     border: 1px solid white;
     border-radius: 5px;
+    margin-left: 30px;
 }
 
 .container:hover input ~ .checkmark  {
@@ -81,6 +85,7 @@ body {
 }
 
 .container .checkmark:after {
+    position: relative;
     left: 4px;
     width: 5px;
     height: 10px;
