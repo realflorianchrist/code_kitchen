@@ -96,4 +96,6 @@ button:hover {
     transform: rotate(45deg);
 }
 
-
+.delete-button {
+    margin-left: 10px;
+}

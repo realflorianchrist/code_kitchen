@@ -3,7 +3,7 @@ const todoStorageKey = 'todos';
 const savedTodos = localStorage.getItem(todoStorageKey);
 const initialTodos = savedTodos
     ? JSON.parse(savedTodos)
-    : [{ id: 1, text: 'fix this code' }];
+    : [];
 
 const database = {
     todos: initialTodos
@@ -18,9 +18,14 @@ export function getTodoById(id) {
 }
 
 export function addTodo(text) {
-    let lastElement = database.todos.slice(-1);
+    let lastElement = database.todos.length > 0
+        ? database.todos[database.todos.length - 1]
+        : { id: -1 };
 
-    const newTodo = { id: lastElement.id + 1, text: text };
+    const newTodo = {
+        id: lastElement.id + 1,
+        text: text
+    };
 
     database.todos.push(newTodo);
 
@@ -29,4 +34,14 @@ export function addTodo(text) {
     database.todos = JSON.parse(localStorage.getItem(todoStorageKey));
 
     return newTodo;
+}
+
+export function removeTodo(text) {
+    const todo = database.todos.findIndex(item => item.text === text);
+
+    if (todo) {
+        database.todos.splice(todo, 1);
+
+        localStorage.setItem(todoStorageKey, JSON.stringify(database.todos));
+    }
 }
