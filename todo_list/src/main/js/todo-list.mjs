@@ -25,7 +25,6 @@ for (const todo of getTodos()) {
     listItem.appendChild(label);
 
     todoList.appendChild(listItem);
-    console.log(getTodos());
 }
 
 addButton.onclick = () => {
