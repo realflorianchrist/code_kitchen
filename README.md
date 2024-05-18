@@ -21,3 +21,7 @@ Ein einfache Todo Liste bei der die Einträge im localStorage gespeichert werden
 ## Weekly tasks
 
 Hier habe ich ein paar Aufgaben aus Ihren Aufgaben gelöst.
+
+
+<span style="color: red; font-size: 20px;">Ich habe zum Teil mehr als 30 min. für ein Commit gebraucht</span>
+

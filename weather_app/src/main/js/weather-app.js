@@ -1,3 +1,6 @@
+
+const BASE_API_URL= 'https://api.open-meteo.com/v1/forecast';
+
 const getUserLocation = () => {
     return new Promise((resolve, reject) => {
         if ("geolocation" in navigator) {
@@ -13,17 +16,36 @@ const getUserLocation = () => {
                 }
             );
         } else {
-            const errorMessage = "Geolocation API is not available in this browser.";
-            console.error(errorMessage);
-            reject(new Error(errorMessage));
+            resolve({ latitude: 47.54, longitude: 7.64 });
         }
     });
 };
 
 getUserLocation()
     .then((coords) => {
-        console.log(`Latitude: ${coords.latitude}, Longitude: ${coords.longitude}`);
+        fetchWeatherData(coords.latitude, coords.longitude);
     })
     .catch((error) => {
         console.error(`Failed to get user location: ${error.message}`);
     });
+
+const fetchWeatherData = async (latitude, longitude) => {
+    const url = `${BASE_API_URL}?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,wind_speed_10m&hourly=temperature_2m,wind_speed_10m`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Weather Data:', data);
+
+        const { hourly } = data;
+        console.log('Hourly Temperature:', hourly.temperature_2m);
+        console.log('Hourly Wind Speed:', hourly.wind_speed_10m);
+
+    } catch (error) {
+        console.error('Failed to fetch weather data:', error);
+    }
+};
