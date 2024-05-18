@@ -2,15 +2,22 @@ export default class WeatherApiUrlBuilder {
     BASE_API_URL = 'https://api.open-meteo.com/v1/forecast';
 
     constructor(
-        public readonly latitude: number,
-        public readonly longitude: number,
-        public readonly current: boolean = false,
-        public readonly hourly: boolean = false,
-        public readonly daily: boolean = false,
-        public readonly pastDays: number = 0,
-    ) {}
+        latitude,
+        longitude,
+        current = false,
+        hourly = false,
+        daily = false,
+        pastDays = 0
+    ) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.current = current;
+        this.hourly = hourly;
+        this.daily = daily;
+        this.pastDays = pastDays;
+    }
 
-    buildURL(): string {
+    buildURL() {
         let url = `${this.BASE_API_URL}?latitude=${this.latitude}&longitude=${this.longitude}`;
 
         if (this.current) url += `&current=temperature_2m`;

@@ -1,4 +1,4 @@
-import WeatherApiUrlBuilder from "./weather-api-url-builder.ts";
+import WeatherApiUrlBuilder from "./weather-api-url-builder.js";
 
 const loader = document.getElementById('loading');
 const currentWeather = document.getElementById('current-weather');
@@ -34,7 +34,7 @@ getUserLocation()
 const fetchWeatherData = async (latitude, longitude) => {
     displayLoader();
 
-    const url = new WeatherApiUrlBuilder(latitude, longitude, true, true, true, 14);
+    const url = new WeatherApiUrlBuilder(latitude, longitude, true, true, true, 14).buildURL();
 
     try {
         const response = await fetch(url);
@@ -43,6 +43,7 @@ const fetchWeatherData = async (latitude, longitude) => {
         }
 
         const data = await response.json();
+        console.log(data);
         currentWeather.textContent = `current temperature: ${data.current.temperature_2m} ${data.current_units.temperature_2m}`;
     } catch (error) {
         console.error('Failed to fetch weather data:', error);
