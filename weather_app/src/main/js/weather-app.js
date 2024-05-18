@@ -1,3 +1,5 @@
+import WeatherApiUrlBuilder from "./weather-api-url-builder.ts";
+
 const loader = document.getElementById('loading');
 const currentWeather = document.getElementById('current-weather');
 
@@ -32,7 +34,7 @@ getUserLocation()
 const fetchWeatherData = async (latitude, longitude) => {
     displayLoader();
 
-    const url = `${BASE_API_URL}?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,wind_speed_10m&hourly=temperature_2m,wind_speed_10m`;
+    const url = new WeatherApiUrlBuilder(latitude, longitude, true, true, true, 14);
 
     try {
         const response = await fetch(url);
