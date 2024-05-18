@@ -1,5 +1,7 @@
-
-const BASE_API_URL= 'https://api.open-meteo.com/v1/forecast';
+const BASE_API_URL = 'https://api.open-meteo.com/v1/forecast';
+const loader = document.getElementById('loading');
+let isLoading = false;
+const currentWeather = document.getElementById('current-weather');
 
 const getUserLocation = () => {
     return new Promise((resolve, reject) => {
@@ -8,7 +10,7 @@ const getUserLocation = () => {
                 (position) => {
                     const latitude = position.coords.latitude;
                     const longitude = position.coords.longitude;
-                    resolve({ latitude, longitude });
+                    resolve({latitude, longitude});
                 },
                 (error) => {
                     console.error(`Error Code: ${error.code}, Error Message: ${error.message}`);
@@ -16,7 +18,7 @@ const getUserLocation = () => {
                 }
             );
         } else {
-            resolve({ latitude: 47.54, longitude: 7.64 });
+            resolve({latitude: 47.54, longitude: 7.64});
         }
     });
 };
@@ -29,23 +31,19 @@ getUserLocation()
         console.error(`Failed to get user location: ${error.message}`);
     });
 
-const fetchWeatherData = async (latitude, longitude) => {
+const fetchWeatherData = (latitude, longitude) => {
+    isLoading = true;
+    loader.classList.add('display');
+
     const url = `${BASE_API_URL}?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,wind_speed_10m&hourly=temperature_2m,wind_speed_10m`;
 
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            loader.classList.remove('display');
+            currentWeather.textContent = `${data.current.temperature_2m} ${data.current_units.temperature_2m}`;
+        })
 
-        const data = await response.json();
-        console.log('Weather Data:', data);
+    isLoading = false;
 
-        const { hourly } = data;
-        console.log('Hourly Temperature:', hourly.temperature_2m);
-        console.log('Hourly Wind Speed:', hourly.wind_speed_10m);
-
-    } catch (error) {
-        console.error('Failed to fetch weather data:', error);
-    }
 };
