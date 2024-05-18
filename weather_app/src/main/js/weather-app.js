@@ -1,6 +1,4 @@
-const BASE_API_URL = 'https://api.open-meteo.com/v1/forecast';
 const loader = document.getElementById('loading');
-let isLoading = false;
 const currentWeather = document.getElementById('current-weather');
 
 const getUserLocation = () => {
