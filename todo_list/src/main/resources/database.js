@@ -1,8 +1,7 @@
 const todoStorageKey = 'todos';
 
-const savedTodos = localStorage.getItem(todoStorageKey);
-const initialTodos = savedTodos
-    ? JSON.parse(savedTodos)
+const initialTodos = getTodosFromLocalStorage()
+    ? getTodosFromLocalStorage()
     : [];
 
 const database = {
@@ -24,14 +23,15 @@ export function addTodo(text) {
 
     const newTodo = {
         id: lastElement.id + 1,
-        text: text
+        text: text,
+        done: false
     };
 
     database.todos.push(newTodo);
 
-    localStorage.setItem(todoStorageKey, JSON.stringify(database.todos));
+    saveTodosToLocalStorage();
 
-    database.todos = JSON.parse(localStorage.getItem(todoStorageKey));
+    database.todos = getTodosFromLocalStorage();
 
     return newTodo;
 }
@@ -42,6 +42,19 @@ export function removeTodo(text) {
     if (todo) {
         database.todos.splice(todo, 1);
 
-        localStorage.setItem(todoStorageKey, JSON.stringify(database.todos));
+        saveTodosToLocalStorage();
     }
+}
+
+export function toggleDone(todo) {
+    todo.done = !todo.done;
+    saveTodosToLocalStorage();
+}
+
+function saveTodosToLocalStorage() {
+    localStorage.setItem(todoStorageKey, JSON.stringify(database.todos));
+}
+
+function getTodosFromLocalStorage() {
+    return JSON.parse(localStorage.getItem(todoStorageKey))
 }

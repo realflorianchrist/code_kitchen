@@ -1,4 +1,4 @@
-import {getTodos, getTodoById, addTodo, removeTodo} from "../resources/database.js";
+import {getTodos, getTodoById, addTodo, removeTodo, toggleDone} from "../resources/database.js";
 
 const inputField = document.getElementById("input-field");
 const addButton = document.getElementById("add-button");
@@ -12,10 +12,11 @@ for (const todo of getTodos()) {
     label.classList.add("container");
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
+    checkbox.checked = todo.done;
     const span = document.createElement("span");
     span.classList.add("checkmark");
     const deleteButton = document.createElement("button");
-    deleteButton.textContent = 'delete';
+    deleteButton.textContent = 'X';
     deleteButton.classList.add("delete-button");
 
     listItem.appendChild(todoItem);
@@ -25,6 +26,10 @@ for (const todo of getTodos()) {
     listItem.appendChild(label);
 
     todoList.appendChild(listItem);
+
+    checkbox.onclick = () => {
+        toggleDone(todo);
+    }
 }
 
 addButton.onclick = () => {

@@ -12,7 +12,10 @@ body {
     /*justify-content: center;*/
     width: 100vw;
     height: 100vh;
-    padding-top: 30px;
+}
+
+#title {
+    margin-top: 30px;
 }
 
 #add-area {
@@ -67,12 +70,12 @@ button:hover {
     margin-left: 30px;
 }
 
-.container:hover input ~ .checkmark  {
+.checkmark:hover  {
     background-color: #737272;
 }
 
 .container input:checked ~ .checkmark {
-    background-color: #2196F3;
+    background-color: #329800;
 }
 
 .checkmark:after {
@@ -98,5 +101,15 @@ button:hover {
 }
 
 .delete-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-left: 10px;
+    height: 19px;
+    width: 19px;
+    background-color: red;
+}
+
+.delete-button:hover {
+    background-color: #ff7070;
 }
