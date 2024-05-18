@@ -31,19 +31,30 @@ getUserLocation()
         console.error(`Failed to get user location: ${error.message}`);
     });
 
-const fetchWeatherData = (latitude, longitude) => {
-    isLoading = true;
-    loader.classList.add('display');
+const fetchWeatherData = async (latitude, longitude) => {
+    displayLoader();
 
     const url = `${BASE_API_URL}?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,wind_speed_10m&hourly=temperature_2m,wind_speed_10m`;
 
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            loader.classList.remove('display');
-            currentWeather.textContent = `${data.current.temperature_2m} ${data.current_units.temperature_2m}`;
-        })
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-    isLoading = false;
-
+        const data = await response.json();
+        currentWeather.textContent = `current temperature: ${data.current.temperature_2m} ${data.current_units.temperature_2m}`;
+    } catch (error) {
+        console.error('Failed to fetch weather data:', error);
+    } finally {
+        hideLoader();
+    }
 };
+
+function displayLoader() {
+    loader.classList.add('display');
+}
+
+function hideLoader() {
+    loader.classList.remove('display');
+}
