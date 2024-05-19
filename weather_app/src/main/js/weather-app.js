@@ -8,10 +8,9 @@ getUserLocation()
         return fetchWeatherData(coords.latitude, coords.longitude);
     })
     .then((data) => {
+        console.log(data);
         currentWeather.textContent = `current temperature: ${data.current.temperature_2m} ${data.current_units.temperature_2m}`;
     })
     .catch((error) => {
         console.error(`Failed to get user location: ${error.message}`);
     });
-
-
