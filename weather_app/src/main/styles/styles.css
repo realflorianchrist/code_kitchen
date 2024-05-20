@@ -37,7 +37,7 @@ body {
     }
 }
 
-#past-weather {
+#weather {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -59,4 +59,8 @@ body {
 #hourly-temperature {
     width: 100%;
     height: 70%;
+}
+
+.today {
+    background-color: red;
 }

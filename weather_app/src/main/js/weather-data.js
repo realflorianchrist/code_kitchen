@@ -4,7 +4,7 @@ import WeatherApiUrlBuilder from "./weather-api-url-builder.js";
 export async function fetchWeatherData(latitude, longitude){
     displayLoader();
 
-    const url = new WeatherApiUrlBuilder(latitude, longitude, true, true, true, 3).buildURL();
+    const url = new WeatherApiUrlBuilder(latitude, longitude, true, true, true, 4, 3).buildURL();
 
     try {
         const response = await fetch(url);

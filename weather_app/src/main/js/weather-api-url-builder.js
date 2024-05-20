@@ -7,6 +7,7 @@ export default class WeatherApiUrlBuilder {
         current = false,
         hourly = false,
         daily = false,
+        forecastDays = 0,
         pastDays = 0
     ) {
         this.latitude = latitude;
@@ -14,6 +15,7 @@ export default class WeatherApiUrlBuilder {
         this.current = current;
         this.hourly = hourly;
         this.daily = daily;
+        this.forecastDays = forecastDays;
         this.pastDays = pastDays;
     }
 
@@ -25,6 +27,8 @@ export default class WeatherApiUrlBuilder {
         if (this.hourly) url += `&hourly=temperature_2m`;
 
         if (this.daily) url += `&daily=sunrise,sunset`;
+
+        if (this.forecastDays > 0) url += `&forecast_days=${this.forecastDays}`;
 
         if (this.pastDays > 0) url += `&past_days=${this.pastDays}`;
 

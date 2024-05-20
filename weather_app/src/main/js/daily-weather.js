@@ -13,14 +13,20 @@ export class DailyWeather {
         this.sunset = sunset;
     }
 
-    render(containerId) {
-        const pastWeatherList = document.createElement('ul');
-        pastWeatherList.id = 'past-weather';
+    render() {
+        const pastWeatherList = document.getElementById('weather');
 
         const dailyWeatherItem = document.createElement('li');
         dailyWeatherItem.id = 'daily-weather';
 
-        const currentTemperatureDiv = this.#createDivElement('current-temperature', `current temperature: ${this.currentTemperature}`);
+        let currentTemperatureDiv;
+        if (this.date === this.#getTodayDate()) {
+            dailyWeatherItem.classList.add('today');
+            currentTemperatureDiv = this.#createDivElement('current-temperature', `current temperature: ${this.currentTemperature}`);
+        } else {
+            currentTemperatureDiv = this.#createDivElement('current-temperature', '.');
+        }
+
         const hourlyTemperatureCanvas = this.#createCanvasElement('hourly-temperature');
         const dateDiv = this.#createDivElement('date', `date: ${this.date}`);
         const sunriseDiv = this.#createDivElement('sunrise', `sunrise: ${this.sunrise}`);
@@ -33,6 +39,14 @@ export class DailyWeather {
         dailyWeatherItem.appendChild(sunsetDiv);
 
         pastWeatherList.appendChild(dailyWeatherItem);
+    }
+
+    #getTodayDate() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0'); // Monate sind 0-basiert, daher +1
+        const day = String(today.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
     }
 
     #createDivElement(id, textContent) {
