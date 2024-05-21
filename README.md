@@ -16,7 +16,11 @@ Ein einfaches PongGame.
 
 ## Todo list
 
-Ein einfache Todo Liste bei der die Einträge im localStorage gespeichert werden.
+Eine einfache Todo Liste bei der die Einträge im localStorage gespeichert werden.
+
+## Weather app
+
+Eine sehr einfache Wetter app bei der die Daten von einer API gefecht werden.
 
 ## Weekly tasks
 
