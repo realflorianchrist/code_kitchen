@@ -10,9 +10,13 @@ getUserLocation()
         console.log(data);
 
         for (let i = 0; i < data.daily.time.length; i++) {
+            let start = i * 24;
+            let end = start + 24;
+            let temperature_24_hours = data.hourly.temperature_2m.slice(start, end);
+
             new DailyWeather(
                 data.current.temperature_2m,
-                [],
+                temperature_24_hours,
                 data.daily.time[i],
                 data.daily.sunrise[i],
                 data.daily.sunset[i]
