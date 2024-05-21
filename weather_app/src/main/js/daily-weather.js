@@ -28,6 +28,7 @@ export class DailyWeather {
         }
 
         const hourlyTemperatureCanvas = this.#createCanvasElement('hourly-temperature');
+        this.#drawHourlyTemperature(hourlyTemperatureCanvas);
         const dateDiv = this.#createDivElement('date', `date: ${this.date}`);
         const sunriseDiv = this.#createDivElement('sunrise', `sunrise: ${this.sunrise}`);
         const sunsetDiv = this.#createDivElement('sunset', `sunset: ${this.sunset}`);
@@ -62,4 +63,23 @@ export class DailyWeather {
         return canvas;
     }
 
+    #drawHourlyTemperature(canvas) {
+        if (!canvas.getContext) {
+            console.error('Canvas is not supported in this browser.');
+            return;
+        }
+
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const scaleFactor = 5;
+
+        ctx.beginPath();
+        ctx.moveTo(0, canvas.height - this.hourlyTemperature[0] * scaleFactor);
+        for (let i = 1; i < this.hourlyTemperature.length; i++) {
+            const yPos = canvas.height - this.hourlyTemperature[i] * scaleFactor;
+            ctx.lineTo((i / this.hourlyTemperature.length) * canvas.width, yPos);
+        }
+        ctx.stroke();
+    }
 }
