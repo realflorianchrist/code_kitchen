@@ -22,16 +22,16 @@ export class DailyWeather {
         let currentTemperatureDiv;
         if (this.date === this.#getTodayDate()) {
             dailyWeatherItem.classList.add('today');
-            currentTemperatureDiv = this.#createDivElement('current-temperature', `current temperature: ${this.currentTemperature} °C`);
+            currentTemperatureDiv = this.#createDivElement('current-temperature', `current temp: ${this.currentTemperature} °C`);
         } else {
             currentTemperatureDiv = this.#createDivElement('current-temperature', '');
         }
 
         const hourlyTemperatureCanvas = this.#createCanvasElement('hourly-temperature');
         this.#drawHourlyTemperature(hourlyTemperatureCanvas);
-        const dateDiv = this.#createDivElement('date', `date: ${this.date}`);
-        const sunriseDiv = this.#createDivElement('sunrise', `sunrise: ${this.sunrise}`);
-        const sunsetDiv = this.#createDivElement('sunset', `sunset: ${this.sunset}`);
+        const dateDiv = this.#createDivElement('date', `date: ${this.#getFormatedDate(this.date)}`);
+        const sunriseDiv = this.#createDivElement('sunrise', `sunrise: ${this.#getFormatedTime(this.sunrise)}`);
+        const sunsetDiv = this.#createDivElement('sunset', `sunset: ${this.#getFormatedTime(this.sunset)}`);
 
         dailyWeatherItem.appendChild(hourlyTemperatureCanvas);
         dailyWeatherItem.appendChild(currentTemperatureDiv);
@@ -45,9 +45,19 @@ export class DailyWeather {
     #getTodayDate() {
         const today = new Date();
         const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0'); // Monate sind 0-basiert, daher +1
+        const month = String(today.getMonth() + 1).padStart(2, '0');
         const day = String(today.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
+    }
+
+    #getFormatedDate(date) {
+        const formatedDate = date.split('-');
+        return `${formatedDate[2]}.${formatedDate[1]}.${formatedDate[0]}`;
+    }
+
+    #getFormatedTime(date) {
+        const formatedTime = date.split('T');
+        return `${formatedTime[1]} Uhr`;
     }
 
     #createDivElement(id, textContent) {
@@ -77,6 +87,9 @@ export class DailyWeather {
         const scaleFactor = 30;
 
         ctx.lineWidth = 5;
+        ctx.strokeStyle = 'white';
+        ctx.font = '30px Arial';
+        ctx.fillStyle = 'white';
 
         // y-axe
         ctx.beginPath();
