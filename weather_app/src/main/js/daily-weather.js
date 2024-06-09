@@ -60,6 +60,8 @@ export class DailyWeather {
     #createCanvasElement(id) {
         const canvas = document.createElement('canvas');
         canvas.id = id;
+        canvas.width = 1000;
+        canvas.height = 1000;
         return canvas;
     }
 
@@ -72,8 +74,23 @@ export class DailyWeather {
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        const scaleFactor = 5;
+        const scaleFactor = 30;
 
+        ctx.lineWidth = 5;
+
+        // y-axe
+        ctx.beginPath();
+        ctx.moveTo(50, 0);
+        ctx.lineTo(50, canvas.height);
+        ctx.stroke();
+
+        // x-axe
+        ctx.beginPath();
+        ctx.moveTo(0, canvas.height - 50);
+        ctx.lineTo(canvas.width, canvas.height - 50);
+        ctx.stroke();
+
+        // weather
         ctx.beginPath();
         ctx.moveTo(0, canvas.height - this.hourlyTemperature[0] * scaleFactor);
         for (let i = 1; i < this.hourlyTemperature.length; i++) {
